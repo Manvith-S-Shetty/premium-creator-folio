@@ -1,9 +1,21 @@
 import { motion } from "motion/react";
-import { skills } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
+import { skills as staticSkills } from "@/config/data";
 import { Section } from "./Section";
 
 export function Skills() {
-  const entries = Object.entries(skills);
+  const { skills: dbSkills } = usePortfolioData();
+
+  const groupedSkills = Array.isArray(dbSkills) && dbSkills.length > 0
+    ? dbSkills.reduce((acc, skill) => {
+        if (!acc[skill.category]) acc[skill.category] = [];
+        acc[skill.category].push(skill.name);
+        return acc;
+      }, {} as Record<string, string[]>)
+    : staticSkills;
+
+  const entries = Object.entries(groupedSkills);
+
   return (
     <Section
       id="skills"
@@ -41,3 +53,4 @@ export function Skills() {
     </Section>
   );
 }
+

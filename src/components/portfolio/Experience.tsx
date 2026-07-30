@@ -1,11 +1,12 @@
 import { motion } from "motion/react";
 import { GraduationCap, Rocket, Trophy, Briefcase } from "lucide-react";
 import type { ComponentType } from "react";
-import { experience, type ExperienceItem } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
+import { experience as staticExperience, type ExperienceItem } from "@/config/data";
 import { Section } from "./Section";
 
 const iconFor: Record<
-  ExperienceItem["type"],
+  string,
   ComponentType<{ size?: number; className?: string }>
 > = {
   education: GraduationCap,
@@ -15,6 +16,51 @@ const iconFor: Record<
 };
 
 export function Experience() {
+  const { experience: dbExp, education: dbEdu, hackathons: dbHack } = usePortfolioData();
+
+  const formattedItems: ExperienceItem[] = [];
+
+  if (Array.isArray(dbExp) && dbExp.length > 0) {
+    dbExp.forEach((e) => {
+      formattedItems.push({
+        id: e.id,
+        duration: `${e.startDate} – ${e.endDate || 'Present'}`,
+        type: 'work',
+        title: e.role,
+        organization: e.company,
+        description: Array.isArray(e.description) ? e.description.join(' ') : e.description,
+      });
+    });
+  }
+
+  if (Array.isArray(dbEdu) && dbEdu.length > 0) {
+    dbEdu.forEach((ed) => {
+      formattedItems.push({
+        id: ed.id,
+        duration: ed.duration,
+        type: 'education',
+        title: ed.degree,
+        organization: ed.institution,
+        description: `CGPA: ${ed.cgpa || 'N/A'}. ${ed.fieldOfStudy || ''}`,
+      });
+    });
+  }
+
+  if (Array.isArray(dbHack) && dbHack.length > 0) {
+    dbHack.forEach((h) => {
+      formattedItems.push({
+        id: h.id,
+        duration: h.dateHeld || '2024',
+        type: 'hackathon',
+        title: `${h.name} (${h.position || 'Participant'})`,
+        organization: h.organizer,
+        description: h.description || '',
+      });
+    });
+  }
+
+  const itemsToRender = formattedItems.length > 0 ? formattedItems : staticExperience;
+
   return (
     <Section
       id="experience"
@@ -25,8 +71,8 @@ export function Experience() {
       <div className="relative">
         <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
         <div className="space-y-10">
-          {experience.map((item, i) => {
-            const Icon = iconFor[item.type];
+          {itemsToRender.map((item, i) => {
+            const Icon = iconFor[item.type] || Briefcase;
             const align = i % 2 === 0;
             return (
               <motion.div
@@ -66,3 +112,4 @@ export function Experience() {
     </Section>
   );
 }
+

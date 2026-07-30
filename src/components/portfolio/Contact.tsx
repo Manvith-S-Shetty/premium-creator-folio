@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { motion } from "motion/react";
 import { Mail, MapPin, Github, Linkedin, Send, Check } from "lucide-react";
-import { personalInfo, socialLinks } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
 import { Section } from "./Section";
 
 function has(v: string) {
@@ -9,9 +9,20 @@ function has(v: string) {
 }
 
 export function Contact() {
+  const { personalInfo, socialLinks: dbSocialLinks } = usePortfolioData();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+
+  const socialLinksMap = Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
+    ? dbSocialLinks.reduce((acc, curr) => ({ ...acc, [curr.platform]: curr.url }), {} as Record<string, string>)
+    : {
+        github: "https://github.com/Manvith-S-Shetty",
+        linkedin: "https://linkedin.com/in/manvith-s-shetty-51b16b283",
+        email: personalInfo.email || "manumanvith06@gmail.com",
+      };
+
+  const contactEmail = personalInfo.email || socialLinksMap.email;
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -21,10 +32,10 @@ export function Contact() {
     if (form.message.trim().length < 10) next.message = "A little more context please";
     setErrors(next);
     if (Object.keys(next).length) return;
-    if (has(socialLinks.email)) {
+    if (has(contactEmail)) {
       const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
       const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`);
-      window.location.href = `mailto:${socialLinks.email}?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
     }
     setSent(true);
     setForm({ name: "", email: "", message: "" });
@@ -48,14 +59,14 @@ export function Contact() {
           transition={{ duration: 0.6 }}
           className="glass-card p-8 md:col-span-2 flex flex-col gap-5"
         >
-          {has(socialLinks.email) && (
-            <a href={`mailto:${socialLinks.email}`} className="flex items-start gap-3 group">
+          {has(contactEmail) && (
+            <a href={`mailto:${contactEmail}`} className="flex items-start gap-3 group">
               <div className="h-10 w-10 rounded-xl border border-border grid place-items-center bg-white/[0.03] group-hover:border-foreground/30 transition-colors">
                 <Mail size={16} />
               </div>
               <div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">Email</div>
-                <div className="text-sm text-foreground/90">{socialLinks.email}</div>
+                <div className="text-sm text-foreground/90">{contactEmail}</div>
               </div>
             </a>
           )}
@@ -70,9 +81,9 @@ export function Contact() {
           </div>
 
           <div className="mt-2 flex items-center gap-3">
-            {has(socialLinks.github) && (
+            {has(socialLinksMap.github) && (
               <a
-                href={socialLinks.github}
+                href={socialLinksMap.github}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
@@ -81,9 +92,9 @@ export function Contact() {
                 <Github size={16} />
               </a>
             )}
-            {has(socialLinks.linkedin) && (
+            {has(socialLinksMap.linkedin) && (
               <a
-                href={socialLinks.linkedin}
+                href={socialLinksMap.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
@@ -162,3 +173,4 @@ export function Contact() {
     </Section>
   );
 }
+

@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowRight, Download, Github, Instagram, Linkedin, Mail } from "lucide-react";
-import { personalInfo, socialLinks } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
 import { cn } from "@/lib/utils";
 
 function has(v: string) {
@@ -8,6 +8,16 @@ function has(v: string) {
 }
 
 export function Hero() {
+  const { personalInfo, resumeUrl, socialLinks: dbSocialLinks } = usePortfolioData();
+
+  const socialLinksMap = Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
+    ? dbSocialLinks.reduce((acc, curr) => ({ ...acc, [curr.platform]: curr.url }), {} as Record<string, string>)
+    : {
+        github: "https://github.com/Manvith-S-Shetty",
+        linkedin: "https://linkedin.com/in/manvith-s-shetty-51b16b283",
+        instagram: "https://www.instagram.com/the.day_._dreamer.____",
+      };
+
   return (
     <section
       id="hero"
@@ -30,41 +40,28 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            Available for new opportunities
+            {personalInfo.isAvailable ? "Available for new opportunities" : "Currently unavailable"}
           </div>
 
           <h1 className="font-display text-5xl md:text-7xl leading-[1.02] tracking-tight">
-            <span className="text-gradient">{personalInfo.name}</span>
+            <span className="text-gradient">{personalInfo.displayName || personalInfo.fullName}</span>
           </h1>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-            {personalInfo.title} · <span className="text-foreground/80">AI/ML Enthusiast</span>
+            {personalInfo.primaryTitle} · <span className="text-foreground/80">AI/ML Enthusiast</span>
           </p>
           <p className="mt-6 max-w-xl text-base md:text-lg text-muted-foreground leading-relaxed">
             {personalInfo.bio}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            {/* {has(socialLinks.resume) && (
-              <a
-                href={socialLinks.resume}
-                className="group inline-flex items-center gap-2 rounded-full accent-gradient text-white px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-glow)] hover:brightness-110 transition"
-              >
-                <Download size={16} />
-                Resume
-                <ArrowRight
-                  size={14}
-                  className="transition-transform group-hover:translate-x-0.5"
-                />
-              </a>
-            )} */}
             {[
-              { key: "github", label: "GitHub", Icon: Github, href: socialLinks.github },
-              { key: "linkedin", label: "LinkedIn", Icon: Linkedin, href: socialLinks.linkedin },
+              { key: "github", label: "GitHub", Icon: Github, href: socialLinksMap.github },
+              { key: "linkedin", label: "LinkedIn", Icon: Linkedin, href: socialLinksMap.linkedin },
               {
                 key: "instagram",
-                label: "instagram",
+                label: "Instagram",
                 Icon: Instagram,
-                href: socialLinks.instagram ? `mailto:${socialLinks.instagram}` : "",
+                href: socialLinksMap.instagram,
               },
             ]
               .filter((b) => has(b.href))
@@ -86,7 +83,7 @@ export function Hero() {
           </div>
         </motion.div>
 
-        <motion.div /* The photo section present here */
+        <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
@@ -96,8 +93,8 @@ export function Hero() {
             <div className="absolute -inset-3 rounded-[2rem] accent-gradient opacity-40 blur-2xl" />
             <div className="relative rounded-[1.75rem] p-[1.5px] accent-gradient">
               <img
-                src={personalInfo.photoUrl}
-                alt={personalInfo.name}
+                src={personalInfo.photoUrl || "/images/me.jpeg"}
+                alt={personalInfo.fullName}
                 width={360}
                 height={400}
                 className="rounded-3xl w-[300px] md:w-[380px] aspect-[4/5] object-cover bg-card"
@@ -105,35 +102,36 @@ export function Hero() {
             </div>
           </div>
           <div className="flex w-full gap-4 justify-center">
-          {has(socialLinks.resume) && (
+            {has(resumeUrl) && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+              >
+                <Download size={16} />
+                Resume 
+                <ArrowRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </a>
+            )}
             <a
-              href={socialLinks.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
-    >
-              <Download size={16} />
-              Resume 
+              href="#contact"
+              className="group flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+            >
+              <Mail size={16} />
+              Contact
               <ArrowRight
                 size={14}
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
             </a>
-          )}
-          <a
-    href="#contact"
-    className="group flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
-  >
-    <Mail size={16} />
-    Contact
-    <ArrowRight
-      size={14}
-      className="transition-transform duration-300 group-hover:translate-x-1"
-    />
-  </a>
           </div>
         </motion.div>
       </div>
     </section>
   );
 }
+
