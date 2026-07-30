@@ -1,9 +1,23 @@
 import { motion } from "motion/react";
 import { Download, ExternalLink, Award } from "lucide-react";
-import { certificates } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
+import { certificates as staticCertificates } from "@/config/data";
 import { Section } from "./Section";
 
 export function Certificates() {
+  const { certificates: dbCertificates } = usePortfolioData();
+
+  const certList = Array.isArray(dbCertificates) && dbCertificates.length > 0
+    ? dbCertificates.map((c) => ({
+        name: c.title,
+        issuer: c.issuer,
+        date: c.issueDate,
+        description: c.description || '',
+        downloadUrl: c.pdfUrl,
+        viewUrl: c.credentialUrl,
+      }))
+    : staticCertificates;
+
   return (
     <Section
       id="certificates"
@@ -11,7 +25,7 @@ export function Certificates() {
       title="Learning receipts"
       description="Coursework, credentials and things I've formally studied outside of college."
     >
-      {certificates.length === 0 ? (
+      {certList.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -29,7 +43,7 @@ export function Certificates() {
         </motion.div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {certificates.map((c, i) => (
+          {certList.map((c, i) => (
             <motion.div
               key={c.name + i}
               initial={{ opacity: 0, y: 20 }}
@@ -77,3 +91,4 @@ export function Certificates() {
     </Section>
   );
 }
+

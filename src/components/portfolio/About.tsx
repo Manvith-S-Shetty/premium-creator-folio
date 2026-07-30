@@ -1,9 +1,15 @@
 import { motion } from "motion/react";
 import { GraduationCap, MapPin, Sparkles, Target } from "lucide-react";
-import { personalInfo } from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
 import { Section } from "./Section";
 
 export function About() {
+  const { personalInfo, education } = usePortfolioData();
+
+  const primaryEdu = Array.isArray(education) && education.length > 0 
+    ? education[0] 
+    : { degree: "B.E. Computer Science and Engineering", institution: "SDMIT, Ujire", duration: "2023 – 2027", cgpa: "8.10 / 10" };
+
   return (
     <Section
       id="about"
@@ -42,14 +48,14 @@ export function About() {
               <GraduationCap size={14} />
               Education
             </div>
-            <div className="font-medium">{personalInfo.education.degree}</div>
+            <div className="font-medium">{primaryEdu.degree}</div>
             <div className="text-sm text-muted-foreground mt-1">
-              {personalInfo.education.institution}
+              {primaryEdu.institution}
             </div>
             <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-              <span>{personalInfo.education.duration}</span>
+              <span>{primaryEdu.duration}</span>
               <span className="rounded-full border border-border px-2 py-0.5">
-                CGPA {personalInfo.education.cgpa}
+                CGPA {primaryEdu.cgpa}
               </span>
             </div>
           </motion.div>
@@ -66,7 +72,7 @@ export function About() {
               Focus areas
             </div>
             <div className="flex flex-wrap gap-2">
-              {personalInfo.techInterests.map((t) => (
+              {(personalInfo.techInterests || []).map((t) => (
                 <span
                   key={t}
                   className="text-xs rounded-full border border-border bg-white/[0.03] px-3 py-1 text-foreground/80"
@@ -81,3 +87,4 @@ export function About() {
     </Section>
   );
 }
+
