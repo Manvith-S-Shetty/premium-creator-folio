@@ -24,14 +24,9 @@ function ResumeManager() {
   const handleUploadNew = async (pdfUrl: string) => {
     setIsUploading(true);
     try {
-      setActiveResume({
-        id: 'new',
-        title,
-        pdfUrl,
-        version: (activeResume?.version || 0) + 1,
-        isActive: true,
-        uploadedAt: new Date().toISOString(),
-      });
+      await adminApi.createActiveResume(title, pdfUrl);
+      const updated = await publicApi.getActiveResume();
+      setActiveResume(updated);
       setUploadSuccess(true);
       setTimeout(() => setUploadSuccess(false), 3000);
     } catch (err: any) {

@@ -315,5 +315,16 @@ export const adminApi = {
 
     if (dbError) throw dbError;
     return pdfUrl;
+  },
+
+  // Set/create active resume row from URL
+  async createActiveResume(title: string, pdfUrl: string): Promise<void> {
+    const { error } = await supabase.from('resumes').insert({
+      title,
+      pdf_url: pdfUrl,
+      is_active: true,
+    });
+
+    if (error) throw error;
   }
 };

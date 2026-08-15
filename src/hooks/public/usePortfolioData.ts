@@ -68,7 +68,7 @@ export function usePortfolioData() {
   const resumeQuery = useQuery({
     queryKey: ['resume', 'active'],
     queryFn: publicApi.getActiveResume,
-    staleTime: 30 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
   });
 
   return {
@@ -82,7 +82,7 @@ export function usePortfolioData() {
     education: educationQuery.data || [],
     achievements: achievementsQuery.data || [],
     hackathons: hackathonsQuery.data || [],
-    resumeUrl: resumeQuery.data?.pdfUrl || (staticPersonalInfo as any).resume || '',
+    resumeUrl: resumeQuery.data?.pdfUrl || '',
     isLoading: personalInfoQuery.isLoading || projectsQuery.isLoading,
     isError: personalInfoQuery.isError || projectsQuery.isError,
   };

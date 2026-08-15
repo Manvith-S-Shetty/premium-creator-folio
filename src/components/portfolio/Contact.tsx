@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Mail, MapPin, Github, Linkedin, Send, Check } from "lucide-react";
 import { usePortfolioData } from "@/hooks/public/usePortfolioData";
 import { Section } from "./Section";
+import { contactApi } from "@/lib/api/contact.api";
 
 function has(v: string) {
   return typeof v === "string" && v.trim().length > 0 && v !== "#";
@@ -10,8 +11,9 @@ function has(v: string) {
 
 export function Contact() {
   const { personalInfo, socialLinks: dbSocialLinks } = usePortfolioData();
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "", website: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
   const socialLinksMap = Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
@@ -24,21 +26,47 @@ export function Contact() {
 
   const contactEmail = personalInfo.email || socialLinksMap.email;
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const next: Record<string, string> = {};
-    if (!form.name.trim()) next.name = "Please tell me your name";
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) next.email = "A valid email helps me reply";
-    if (form.message.trim().length < 10) next.message = "A little more context please";
+    if (!form.name.trim())
+      next.name = "Please tell me your name";
+
+    if (!/^\S+@\S+\.\S+$/.test(form.email))
+      next.email = "A valid email helps me reply";
+
+    if (!form.subject.trim())
+      next.subject = "Please enter a subject";
+
+    if (form.message.trim().length < 10)
+      next.message = "Please write at least 10 characters so I have context";
+    
     setErrors(next);
     if (Object.keys(next).length) return;
-    if (has(contactEmail)) {
-      const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
-      const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`);
-      window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+
+    setLoading(true);
+
+    try {
+      await contactApi.submitMessage(form);
+      setSent(true);
+      setErrors({});
+      setForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        website: "",
+      });
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
     }
-    setSent(true);
-    setForm({ name: "", email: "", message: "" });
   };
 
   const inputCls =
@@ -114,6 +142,17 @@ export function Contact() {
           transition={{ duration: 0.6, delay: 0.05 }}
           className="glass-card p-8 md:col-span-3 space-y-4"
         >
+          {/* Honeypot anti-spam hidden field */}
+          <div className="hidden" aria-hidden="true">
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={form.website}
+              onChange={(e) => setForm({ ...form, website: e.target.value })}
+            />
+          </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs uppercase tracking-wider text-muted-foreground">Name</label>
@@ -138,6 +177,24 @@ export function Contact() {
               {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
             </div>
           </div>
+
+          <div>
+            <label className="text-xs uppercase tracking-wider text-muted-foreground">
+              Subject
+            </label>
+            <input
+              className={inputCls + " mt-2"}
+              value={form.subject}
+              onChange={(e) => setForm({ ...form, subject: e.target.value })}
+              placeholder="Job Opportunity"
+            />
+            {errors.subject && (
+              <p className="text-xs text-destructive mt-1">
+                {errors.subject}
+              </p>
+            )}
+          </div>
+
           <div>
             <label className="text-xs uppercase tracking-wider text-muted-foreground">
               Message
@@ -151,21 +208,23 @@ export function Contact() {
             />
             {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
           </div>
+
           <div className="flex items-center justify-between pt-2">
             <div className="text-xs text-muted-foreground">
               {sent ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-400">
-                  <Check size={14} /> Opening your mail client…
+                  <Check size={14} /> Message sent successfully!
                 </span>
               ) : (
                 "I usually reply within a day or two."
               )}
             </div>
             <button
+              disabled={loading}
               type="submit"
-              className="inline-flex items-center gap-2 rounded-full accent-gradient text-white px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-glow)] hover:brightness-110 transition"
+              className="inline-flex items-center gap-2 rounded-full accent-gradient text-white px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-glow)] hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Send message <Send size={14} />
+              {loading ? "Sending..." : "Send message"} <Send size={14} />
             </button>
           </div>
         </motion.form>
@@ -173,4 +232,3 @@ export function Contact() {
     </Section>
   );
 }
-

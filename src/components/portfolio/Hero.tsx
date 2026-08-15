@@ -7,8 +7,17 @@ function has(v: string) {
   return typeof v === "string" && v.trim().length > 0 && v !== "#";
 }
 
+function isValidWebUrl(v: string | undefined | null): boolean {
+  if (!v || typeof v !== "string") return false;
+  const trimmed = v.trim();
+  if (trimmed.length === 0 || trimmed === "#") return false;
+  if (trimmed.startsWith("file:") || /^[a-zA-Z]:\\/.test(trimmed)) return false;
+  return trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/");
+}
+
 export function Hero() {
   const { personalInfo, resumeUrl, socialLinks: dbSocialLinks } = usePortfolioData();
+  const isResumeAvailable = isValidWebUrl(resumeUrl);
 
   const socialLinksMap = Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
     ? dbSocialLinks.reduce((acc, curr) => ({ ...acc, [curr.platform]: curr.url }), {} as Record<string, string>)
@@ -102,11 +111,13 @@ export function Hero() {
             </div>
           </div>
           <div className="flex w-full gap-4 justify-center">
-            {has(resumeUrl) && (
+            {isResumeAvailable ? (
               <a
                 href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                download
+                aria-label="Download Resume"
                 className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
               >
                 <Download size={16} />
@@ -116,6 +127,19 @@ export function Hero() {
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
               </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                aria-label="Resume unavailable"
+                title="Resume unavailable"
+                className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border/50 bg-card/30 backdrop-blur-md px-5 py-4 text-sm font-medium opacity-50 cursor-not-allowed text-muted-foreground"
+              >
+                <Download size={16} />
+                Resume
+                <ArrowRight size={14} />
+              </button>
             )}
             <a
               href="#contact"

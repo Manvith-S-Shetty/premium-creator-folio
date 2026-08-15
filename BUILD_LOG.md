@@ -190,6 +190,67 @@
   - [x] RLS security boundaries verified for single-admin operation.
   - [x] Portfolio CMS transformation complete!
 
+## [Milestone 8: Contact System & CMS Inbox Module Implementation] - 2026-08-01 16:12
+- **Status:** COMPLETED
+- **Files Created:**
+  - `src/lib/types/contact.types.ts`
+  - `src/lib/api/contact.api.ts`
+  - `docs/explainers/supabase/functions/contact/index.ts.md`
+  - `docs/explainers/src/lib/types/contact.types.md`
+  - `docs/explainers/src/lib/api/contact.api.md`
+  - `docs/explainers/src/components/portfolio/Contact.md`
+  - `docs/explainers/src/routes/admin/_admin/contact.md`
+  - `docs/guides/contact-system.md`
+  - `COMPLETE.md`
+- **Files Modified:**
+  - `supabase/functions/contact/index.ts`
+  - `src/components/portfolio/Contact.tsx`
+  - `src/routes/admin/_admin/contact.tsx`
+  - `src/routes/admin/_admin/index.tsx`
+  - `BUILD_LOG.md`
+- **Key Architectural Decisions & Rationale:**
+  - Completed Supabase Edge Function (`supabase/functions/contact/index.ts`) with strict POST validation, CORS headers, email format verification, input sanitization, database persistence to table `messages` (default status `'unread'`), and admin notification emails via Resend API.
+  - Built `contact.api.ts` in `src/lib/api/` encapsulating public Edge Function submission calls (`submitMessage`) and direct Supabase database admin Inbox queries (`getMessages`, `updateMessageStatus`, `deleteMessage`).
+  - Refactored `src/components/portfolio/Contact.tsx` to route all submissions exclusively through `contactApi.submitMessage()`.
+  - Built CMS Inbox control panel in `src/routes/admin/_admin/contact.tsx` with status filter tabs (`all`, `unread`, `read`, `replied`, `archived`), search bar, detail modal with auto-mark read logic, status update actions, deletion, pagination, and an explicit outbound reply limitation notice.
+  - Updated Overview Dashboard (`src/routes/admin/_admin/index.tsx`) to display real-time unread contact message badge count.
+  - Generated all three documentation layers: per-file explainers, `docs/guides/contact-system.md` teaching guide, and master architectural doc `COMPLETE.md`.
+- **Environment Variables & Supabase Setup Steps Required:**
+  - `RESEND_API_KEY`: Set in Supabase Edge Function secrets for admin email notifications.
+## [Milestone 9: Resend SMTP In-CMS Reply System, Spam Protection & Modern Deno Edge Functions] - 2026-08-01 17:35
+- **Status:** COMPLETED
+- **Files Created:**
+  - `supabase/functions/reply-contact/index.ts`
+  - `docs/explainers/supabase/functions/reply-contact/index.md`
+- **Files Modified:**
+  - `supabase/functions/contact/index.ts`
+  - `src/lib/types/contact.types.ts`
+  - `src/lib/api/contact.api.ts`
+  - `src/components/portfolio/Contact.tsx`
+  - `src/routes/admin/_admin/contact.tsx`
+  - `docs/explainers/supabase/functions/contact/index.md`
+  - `docs/explainers/src/lib/api/contact.api.md`
+  - `docs/explainers/src/components/portfolio/Contact.md`
+  - `docs/explainers/src/routes/admin/_admin/contact.md`
+  - `docs/guides/contact-system.md`
+  - `COMPLETE.md`
+  - `BUILD_LOG.md`
+- **Key Architectural Decisions & Rationale:**
+  - **Modern Deno Runtime**: Refactored `supabase/functions/contact/index.ts` to use native `Deno.serve(...)`, eliminating deprecated `https://deno.land/std/http/server.ts` URL imports and IDE TypeScript resolution errors.
+  - **Multi-Layer Spam Protection**: Implemented an invisible honeypot field (`website`), minimum 10-character message context requirement, disposable email domain blocklist (`mailinator.com`, `10minutemail.com`, etc.), and in-memory IP rate limiting (max 5 requests per 10-minute window).
+  - **Outbound Email Reply System**: Created dedicated serverless Edge Function `supabase/functions/reply-contact/index.ts` to handle outbound admin email responses via Resend API, keeping server keys 100% server-side.
+  - **In-CMS Reply UI**: Upgraded CMS Inbox (`src/routes/admin/_admin/contact.tsx`) with an in-CMS reply modal allowing administrators to compose and send email responses directly to visitors, automatically updating database status to `'replied'`.
+  - **3-Layer Documentation**: Updated all per-file explainers, teaching guide (`docs/guides/contact-system.md`), and master architectural documentation (`COMPLETE.md`).
+- **Environment Variables & Supabase Setup Steps Required:**
+  - Set `RESEND_API_KEY` and `ADMIN_EMAIL` in Supabase Edge Function secrets (`supabase secrets set RESEND_API_KEY=... ADMIN_EMAIL=...`).
+- **Verification Results & Acceptance Evidence:**
+  - [x] Production build (`bun run build`) compiled cleanly with zero TypeScript errors.
+  - [x] Multi-layer spam protection (honeypot, disposable block, rate limit) active and enforced.
+  - [x] Outbound email reply system and CMS Inbox status sync verified.
+  - [x] All 3 documentation layers updated and synchronized.
+
+
+
 
 
 
