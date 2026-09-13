@@ -6,9 +6,15 @@ import { Section } from "./Section";
 export function About() {
   const { personalInfo, education } = usePortfolioData();
 
-  const primaryEdu = Array.isArray(education) && education.length > 0 
-    ? education[0] 
-    : { degree: "B.E. Computer Science and Engineering", institution: "SDMIT, Ujire", duration: "2023 – 2027", cgpa: "8.10 / 10" };
+  const primaryEdu =
+    Array.isArray(education) && education.length > 0
+      ? education[0]
+      : {
+          degree: "B.E. Computer Science and Engineering",
+          institution: "SDMIT, Ujire",
+          duration: "2023 – 2027",
+          cgpa: "8.10 / 10",
+        };
 
   return (
     <Section
@@ -29,7 +35,10 @@ export function About() {
             <Sparkles size={14} />
             The short version
           </div>
-          <p className="text-lg leading-relaxed text-foreground/85">{personalInfo.bio}</p>
+          <p className="text-lg leading-relaxed text-foreground/85">
+            {(personalInfo as any).aboutBio ||
+              "I focus on engineering software with clean architecture, high reliability, and intuitive user experiences. Whether developing real-time synchronized applications or machine learning models, I prioritize building systems that are both performant and scalable."}
+          </p>
           <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin size={14} />
             {personalInfo.location}
@@ -49,9 +58,7 @@ export function About() {
               Education
             </div>
             <div className="font-medium">{primaryEdu.degree}</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {primaryEdu.institution}
-            </div>
+            <div className="text-sm text-muted-foreground mt-1">{primaryEdu.institution}</div>
             <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
               <span>{primaryEdu.duration}</span>
               <span className="rounded-full border border-border px-2 py-0.5">
@@ -87,4 +94,3 @@ export function About() {
     </Section>
   );
 }
-

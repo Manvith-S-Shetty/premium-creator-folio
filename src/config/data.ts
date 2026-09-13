@@ -21,7 +21,8 @@ export const socialLinks = {
   github: "https://github.com/Manvith-S-Shetty?",
   linkedin: "https://linkedin.com/in/manvith-s-shetty-51b16b283",
   email: "manumanvith06@gmail.com",
-  resume: "C:\Users\Manvith S shetty\Downloads\premium-creator-folio-main\premium-creator-folio-main\.output\public\resume\SWE_Backend-1 (1).pdf",
+  resume:
+    "C:\Users\Manvith S shetty\Downloads\premium-creator-folio-main\premium-creator-folio-main\.output\public\resume\SWE_Backend-1 (1).pdf",
   leetcode: "https://leetcode.com/your-username",
   twitter: "",
   instagram: "https://www.instagram.com/the.day_._dreamer.____?igsh=NWh1aGQxbDYxYXR6",

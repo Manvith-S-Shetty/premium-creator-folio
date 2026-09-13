@@ -1,17 +1,22 @@
-import { supabase } from '@/config/supabase';
-import { 
-  PersonalInfoDTO, SiteSettingsDTO, SocialLinkDTO, ProjectDTO, CertificateDTO, 
-  SkillDTO, ExperienceDTO, EducationDTO, AchievementDTO, HackathonDTO, ResumeDTO 
-} from '../types/cms.types';
+import { supabase } from "@/config/supabase";
+import {
+  PersonalInfoDTO,
+  SiteSettingsDTO,
+  SocialLinkDTO,
+  ProjectDTO,
+  CertificateDTO,
+  SkillDTO,
+  ExperienceDTO,
+  EducationDTO,
+  AchievementDTO,
+  HackathonDTO,
+  ResumeDTO,
+} from "../types/cms.types";
 
 export const publicApi = {
   // Fetch Personal Info for Hero & About
   async getPersonalInfo(): Promise<PersonalInfoDTO> {
-    const { data, error } = await supabase
-      .from('personal_info')
-      .select('*')
-      .limit(1)
-      .single();
+    const { data, error } = await supabase.from("personal_info").select("*").limit(1).single();
 
     if (error) throw error;
     return {
@@ -37,11 +42,7 @@ export const publicApi = {
 
   // Fetch Site Settings
   async getSiteSettings(): Promise<SiteSettingsDTO> {
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('*')
-      .limit(1)
-      .single();
+    const { data, error } = await supabase.from("site_settings").select("*").limit(1).single();
 
     if (error) throw error;
     return {
@@ -59,10 +60,10 @@ export const publicApi = {
   // Fetch Social Links
   async getSocialLinks(): Promise<SocialLinkDTO[]> {
     const { data, error } = await supabase
-      .from('social_links')
-      .select('*')
-      .eq('is_visible', true)
-      .order('display_order', { ascending: true });
+      .from("social_links")
+      .select("*")
+      .eq("is_visible", true)
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((sl: any) => ({
@@ -78,9 +79,9 @@ export const publicApi = {
   // Fetch Skills Matrix
   async getSkills(): Promise<SkillDTO[]> {
     const { data, error } = await supabase
-      .from('skills')
-      .select('*')
-      .order('display_order', { ascending: true });
+      .from("skills")
+      .select("*")
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((s: any) => ({
@@ -97,14 +98,16 @@ export const publicApi = {
   // Fetch Published Projects with Skills & Screenshots
   async getPublishedProjects(): Promise<ProjectDTO[]> {
     const { data, error } = await supabase
-      .from('projects')
-      .select(`
+      .from("projects")
+      .select(
+        `
         *,
         project_screenshots(image_url, display_order),
         project_skills(skills(*))
-      `)
-      .eq('is_published', true)
-      .order('display_order', { ascending: true });
+      `,
+      )
+      .eq("is_published", true)
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((item: any) => ({
@@ -134,9 +137,9 @@ export const publicApi = {
   // Fetch Certificates
   async getCertificates(): Promise<CertificateDTO[]> {
     const { data, error } = await supabase
-      .from('certificates')
-      .select('*')
-      .order('display_order', { ascending: true });
+      .from("certificates")
+      .select("*")
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((c: any) => ({
@@ -159,12 +162,14 @@ export const publicApi = {
   // Fetch Work Experience with Skills
   async getExperience(): Promise<ExperienceDTO[]> {
     const { data, error } = await supabase
-      .from('experience')
-      .select(`
+      .from("experience")
+      .select(
+        `
         *,
         experience_skills(skills(*))
-      `)
-      .order('display_order', { ascending: true });
+      `,
+      )
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((e: any) => ({
@@ -186,9 +191,9 @@ export const publicApi = {
   // Fetch Education History
   async getEducation(): Promise<EducationDTO[]> {
     const { data, error } = await supabase
-      .from('education')
-      .select('*')
-      .order('display_order', { ascending: true });
+      .from("education")
+      .select("*")
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((ed: any) => ({
@@ -207,9 +212,9 @@ export const publicApi = {
   // Fetch Achievements
   async getAchievements(): Promise<AchievementDTO[]> {
     const { data, error } = await supabase
-      .from('achievements')
-      .select('*')
-      .order('display_order', { ascending: true });
+      .from("achievements")
+      .select("*")
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((a: any) => ({
@@ -227,9 +232,9 @@ export const publicApi = {
   // Fetch Hackathons
   async getHackathons(): Promise<HackathonDTO[]> {
     const { data, error } = await supabase
-      .from('hackathons')
-      .select('*')
-      .order('display_order', { ascending: true });
+      .from("hackathons")
+      .select("*")
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data.map((h: any) => ({
@@ -249,9 +254,9 @@ export const publicApi = {
   // Fetch Active Resume URL
   async getActiveResume(): Promise<ResumeDTO | null> {
     const { data, error } = await supabase
-      .from('resumes')
-      .select('*')
-      .eq('is_active', true)
+      .from("resumes")
+      .select("*")
+      .eq("is_active", true)
       .limit(1)
       .maybeSingle();
 
@@ -265,5 +270,5 @@ export const publicApi = {
       isActive: data.is_active,
       uploadedAt: data.uploaded_at,
     };
-  }
+  },
 };

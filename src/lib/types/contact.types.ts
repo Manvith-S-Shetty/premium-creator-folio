@@ -1,4 +1,4 @@
-import { PersonalInfoDTO } from './cms.types';
+import { PersonalInfoDTO } from "./cms.types";
 
 export type ContactSubmissionPayload = {
   name: string;
@@ -26,7 +26,7 @@ export type ReplyResponse = {
   message: string;
 };
 
-export type MessageStatus = 'unread' | 'read' | 'replied' | 'archived';
+export type MessageStatus = "unread" | "read" | "replied" | "archived";
 
 export type ContactMessageDTO = {
   id: string;

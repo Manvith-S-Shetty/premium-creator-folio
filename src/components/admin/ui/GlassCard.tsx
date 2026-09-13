@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface GlassCardProps {
   children: React.ReactNode;
@@ -7,7 +7,11 @@ interface GlassCardProps {
   hoverEffect?: boolean;
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({ children, className = '', hoverEffect = false }) => {
+export const GlassCard: React.FC<GlassCardProps> = ({
+  children,
+  className = "",
+  hoverEffect = false,
+}) => {
   return (
     <motion.div
       whileHover={hoverEffect ? { y: -4, transition: { duration: 0.2 } } : undefined}

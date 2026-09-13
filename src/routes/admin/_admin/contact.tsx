@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState, useCallback } from 'react';
-import { contactApi } from '@/lib/api/contact.api';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { ContactMessageDTO, MessageStatus } from '@/lib/types/contact.types';
-import { FormInput } from '@/components/admin/ui/FormInput';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState, useCallback } from "react";
+import { contactApi } from "@/lib/api/contact.api";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { ContactMessageDTO, MessageStatus } from "@/lib/types/contact.types";
+import { FormInput } from "@/components/admin/ui/FormInput";
 import {
   Mail,
   Search,
@@ -18,21 +18,21 @@ import {
   CheckCircle2,
   Send,
   ShieldCheck,
-} from 'lucide-react';
+} from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/contact')({
+export const Route = createFileRoute("/admin/_admin/contact")({
   component: ContactAndInboxManager,
 });
 
 function ContactAndInboxManager() {
   // Tab state: 'inbox' vs 'settings'
-  const [activeTab, setActiveTab] = useState<'inbox' | 'settings'>('inbox');
+  const [activeTab, setActiveTab] = useState<"inbox" | "settings">("inbox");
 
   // Inbox state
   const [messages, setMessages] = useState<ContactMessageDTO[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<MessageStatus | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<MessageStatus | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 8;
   const [loading, setLoading] = useState(false);
@@ -42,14 +42,14 @@ function ContactAndInboxManager() {
 
   // In-CMS Reply Modal state
   const [replyModalMessage, setReplyModalMessage] = useState<ContactMessageDTO | null>(null);
-  const [replySubject, setReplySubject] = useState('');
-  const [replyText, setReplyText] = useState('');
+  const [replySubject, setReplySubject] = useState("");
+  const [replyText, setReplyText] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
 
   // Public Settings state
-  const [email, setEmail] = useState('');
-  const [location, setLocation] = useState('');
+  const [email, setEmail] = useState("");
+  const [location, setLocation] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -66,7 +66,7 @@ function ContactAndInboxManager() {
       setMessages(res.data);
       setTotalCount(res.totalCount);
     } catch (err) {
-      console.error('Failed to load messages', err);
+      console.error("Failed to load messages", err);
     } finally {
       setLoading(false);
     }
@@ -79,8 +79,8 @@ function ContactAndInboxManager() {
   useEffect(() => {
     publicApi.getPersonalInfo().then((info) => {
       if (info) {
-        setEmail(info.email || '');
-        setLocation(info.location || '');
+        setEmail(info.email || "");
+        setLocation(info.location || "");
       }
     });
   }, []);
@@ -90,15 +90,13 @@ function ContactAndInboxManager() {
   // matches standard email client workflows (Gmail, Outlook) and reduces unnecessary clicks for the admin.
   const handleOpenMessage = async (msg: ContactMessageDTO) => {
     setSelectedMessage(msg);
-    if (msg.status === 'unread') {
+    if (msg.status === "unread") {
       try {
-        await contactApi.updateMessageStatus(msg.id, 'read');
-        setMessages((prev) =>
-          prev.map((m) => (m.id === msg.id ? { ...m, status: 'read' } : m))
-        );
-        setSelectedMessage({ ...msg, status: 'read' });
+        await contactApi.updateMessageStatus(msg.id, "read");
+        setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, status: "read" } : m)));
+        setSelectedMessage({ ...msg, status: "read" });
       } catch (err) {
-        console.error('Failed to mark message as read:', err);
+        console.error("Failed to mark message as read:", err);
       }
     }
   };
@@ -107,7 +105,7 @@ function ContactAndInboxManager() {
   const handleOpenReplyModal = (msg: ContactMessageDTO) => {
     setReplyModalMessage(msg);
     setReplySubject(`Re: ${msg.subject}`);
-    setReplyText('');
+    setReplyText("");
     setReplyError(null);
   };
 
@@ -117,7 +115,7 @@ function ContactAndInboxManager() {
     if (!replyModalMessage) return;
 
     if (!replyText.trim()) {
-      setReplyError('Reply message body cannot be empty.');
+      setReplyError("Reply message body cannot be empty.");
       return;
     }
 
@@ -134,17 +132,17 @@ function ContactAndInboxManager() {
 
       // Update local state
       setMessages((prev) =>
-        prev.map((m) => (m.id === replyModalMessage.id ? { ...m, status: 'replied' } : m))
+        prev.map((m) => (m.id === replyModalMessage.id ? { ...m, status: "replied" } : m)),
       );
       if (selectedMessage && selectedMessage.id === replyModalMessage.id) {
-        setSelectedMessage({ ...selectedMessage, status: 'replied' });
+        setSelectedMessage({ ...selectedMessage, status: "replied" });
       }
 
       setReplyModalMessage(null);
       fetchMessages();
     } catch (err: any) {
-      console.error('Failed to send reply:', err);
-      setReplyError(err.message || 'Failed to deliver reply email');
+      console.error("Failed to send reply:", err);
+      setReplyError(err.message || "Failed to deliver reply email");
     } finally {
       setIsSendingReply(false);
     }
@@ -159,13 +157,13 @@ function ContactAndInboxManager() {
         setSelectedMessage({ ...selectedMessage, status });
       }
     } catch (err) {
-      alert('Failed to update status');
+      alert("Failed to update status");
     }
   };
 
   // Action: Delete message
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to permanently delete this message?')) {
+    if (confirm("Are you sure you want to permanently delete this message?")) {
       try {
         await contactApi.deleteMessage(id);
         if (selectedMessage && selectedMessage.id === id) {
@@ -173,7 +171,7 @@ function ContactAndInboxManager() {
         }
         fetchMessages();
       } catch (err) {
-        alert('Failed to delete message');
+        alert("Failed to delete message");
       }
     }
   };
@@ -187,7 +185,7 @@ function ContactAndInboxManager() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
-      alert(err.message || 'Failed to save contact settings');
+      alert(err.message || "Failed to save contact settings");
     } finally {
       setIsSaving(false);
     }
@@ -197,14 +195,30 @@ function ContactAndInboxManager() {
 
   const getStatusBadge = (status: MessageStatus) => {
     switch (status) {
-      case 'unread':
-        return <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Unread</span>;
-      case 'read':
-        return <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-500/20 text-slate-400 border border-slate-500/30">Read</span>;
-      case 'replied':
-        return <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Replied</span>;
-      case 'archived':
-        return <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Archived</span>;
+      case "unread":
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+            Unread
+          </span>
+        );
+      case "read":
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-500/20 text-slate-400 border border-slate-500/30">
+            Read
+          </span>
+        );
+      case "replied":
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            Replied
+          </span>
+        );
+      case "archived":
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            Archived
+          </span>
+        );
     }
   };
 
@@ -213,29 +227,33 @@ function ContactAndInboxManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">Contact & Communications</h1>
-          <p className="text-sm text-slate-400">View incoming portfolio messages, reply via SMTP, and manage public contact info</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+            Contact & Communications
+          </h1>
+          <p className="text-sm text-slate-400">
+            View incoming portfolio messages, reply via SMTP, and manage public contact info
+          </p>
         </div>
 
         {/* Tab switcher */}
         <div className="flex items-center gap-1 rounded-xl bg-white/[0.03] p-1 border border-white/10 self-start sm:self-auto">
           <button
-            onClick={() => setActiveTab('inbox')}
+            onClick={() => setActiveTab("inbox")}
             className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === 'inbox'
-                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10'
-                : 'text-slate-400 hover:text-slate-200'
+              activeTab === "inbox"
+                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
+                : "text-slate-400 hover:text-slate-200"
             }`}
           >
             <Mail className="h-4 w-4" />
             <span>CMS Inbox</span>
           </button>
           <button
-            onClick={() => setActiveTab('settings')}
+            onClick={() => setActiveTab("settings")}
             className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === 'settings'
-                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10'
-                : 'text-slate-400 hover:text-slate-200'
+              activeTab === "settings"
+                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
+                : "text-slate-400 hover:text-slate-200"
             }`}
           >
             <Save className="h-4 w-4" />
@@ -244,15 +262,19 @@ function ContactAndInboxManager() {
         </div>
       </div>
 
-      {activeTab === 'inbox' ? (
+      {activeTab === "inbox" ? (
         <div className="space-y-6">
           {/* Active System Health Banner */}
           <div className="flex items-start gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-4 text-xs text-cyan-300">
             <ShieldCheck className="h-5 w-5 shrink-0 text-cyan-400 mt-0.5" />
             <div>
-              <p className="font-semibold text-cyan-200">Active Production Contact & Inbox Pipeline</p>
+              <p className="font-semibold text-cyan-200">
+                Active Production Contact & Inbox Pipeline
+              </p>
               <p className="mt-0.5 text-cyan-300/90">
-                Visitor submissions are protected by honeypot anti-spam, disposable domain blocking, and IP rate limiting. Direct email replies are dispatched via Supabase Edge Function & Resend SMTP.
+                Visitor submissions are protected by honeypot anti-spam, disposable domain blocking,
+                and IP rate limiting. Direct email replies are dispatched via Supabase Edge Function
+                & Resend SMTP.
               </p>
             </div>
           </div>
@@ -261,7 +283,7 @@ function ContactAndInboxManager() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Status Filter Buttons */}
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-              {(['all', 'unread', 'read', 'replied', 'archived'] as const).map((st) => (
+              {(["all", "unread", "read", "replied", "archived"] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => {
@@ -270,8 +292,8 @@ function ContactAndInboxManager() {
                   }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
                     statusFilter === st
-                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                      : 'bg-white/[0.03] text-slate-400 hover:bg-white/[0.08] border border-white/10'
+                      ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                      : "bg-white/[0.03] text-slate-400 hover:bg-white/[0.08] border border-white/10"
                   }`}
                 >
                   {st}
@@ -326,7 +348,9 @@ function ContactAndInboxManager() {
                       <tr
                         key={msg.id}
                         className={`hover:bg-white/[0.02] transition-colors cursor-pointer ${
-                          msg.status === 'unread' ? 'font-semibold text-slate-100 bg-cyan-500/[0.02]' : ''
+                          msg.status === "unread"
+                            ? "font-semibold text-slate-100 bg-cyan-500/[0.02]"
+                            : ""
                         }`}
                         onClick={() => handleOpenMessage(msg)}
                       >
@@ -358,7 +382,7 @@ function ContactAndInboxManager() {
                               <Reply className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => handleUpdateStatus(msg.id, 'archived')}
+                              onClick={() => handleUpdateStatus(msg.id, "archived")}
                               title="Archive"
                               className="p-1.5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-amber-400"
                             >
@@ -383,7 +407,7 @@ function ContactAndInboxManager() {
             {/* Pagination Controls */}
             <div className="flex items-center justify-between px-4 py-3 border-t border-white/10 bg-white/[0.02]">
               <span className="text-xs text-slate-400">
-                Showing {messages.length > 0 ? (page - 1) * pageSize + 1 : 0} to{' '}
+                Showing {messages.length > 0 ? (page - 1) * pageSize + 1 : 0} to{" "}
                 {Math.min(page * pageSize, totalCount)} of {totalCount} messages
               </span>
 
@@ -411,7 +435,10 @@ function ContactAndInboxManager() {
         </div>
       ) : (
         /* Settings Tab */
-        <form onSubmit={handleSaveSettings} className="space-y-6 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <form
+          onSubmit={handleSaveSettings}
+          className="space-y-6 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+        >
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-200">Public Contact Details</h2>
             {saveSuccess && (
@@ -441,7 +468,7 @@ function ContactAndInboxManager() {
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-xs font-semibold text-white hover:from-cyan-400 hover:to-indigo-500 shadow-lg shadow-cyan-500/20 disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
-              {isSaving ? 'Saving Changes...' : 'Save Public Settings'}
+              {isSaving ? "Saving Changes..." : "Save Public Settings"}
             </button>
           </div>
         </form>
@@ -458,7 +485,8 @@ function ContactAndInboxManager() {
                   {getStatusBadge(selectedMessage.status)}
                 </div>
                 <p className="text-xs text-slate-400 mt-1">
-                  From: <span className="text-cyan-400">{selectedMessage.name}</span> ({selectedMessage.email})
+                  From: <span className="text-cyan-400">{selectedMessage.name}</span> (
+                  {selectedMessage.email})
                 </p>
                 <p className="text-[11px] text-slate-500">
                   Received: {new Date(selectedMessage.createdAt).toLocaleString()}
@@ -490,9 +518,9 @@ function ContactAndInboxManager() {
                   <span>Reply in CMS</span>
                 </button>
 
-                {selectedMessage.status !== 'archived' && (
+                {selectedMessage.status !== "archived" && (
                   <button
-                    onClick={() => handleUpdateStatus(selectedMessage.id, 'archived')}
+                    onClick={() => handleUpdateStatus(selectedMessage.id, "archived")}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold hover:bg-amber-500/30"
                   >
                     <Archive className="h-3.5 w-3.5" />
@@ -524,7 +552,8 @@ function ContactAndInboxManager() {
               <div>
                 <h3 className="text-base font-bold text-slate-100">Send Direct Email Reply</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  To: <span className="text-cyan-400">{replyModalMessage.name}</span> ({replyModalMessage.email})
+                  To: <span className="text-cyan-400">{replyModalMessage.name}</span> (
+                  {replyModalMessage.email})
                 </p>
               </div>
               <button
@@ -554,7 +583,9 @@ function ContactAndInboxManager() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-400 block mb-1">Reply Body Message</label>
+              <label className="text-xs font-medium text-slate-400 block mb-1">
+                Reply Body Message
+              </label>
               <textarea
                 rows={6}
                 value={replyText}
@@ -579,7 +610,7 @@ function ContactAndInboxManager() {
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-500/20 disabled:opacity-50 hover:brightness-110"
               >
                 <Send className="h-4 w-4" />
-                {isSendingReply ? 'Sending Email...' : 'Send Reply via Resend'}
+                {isSendingReply ? "Sending Email..." : "Send Reply via Resend"}
               </button>
             </div>
           </form>

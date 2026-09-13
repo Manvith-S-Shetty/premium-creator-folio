@@ -29,10 +29,12 @@ Here is the exact journey of a message from the moment a visitor hits **Send**:
 Why not let the React component write directly to the database or send emails directly?
 
 ### Security & Secret Protection
+
 - Email delivery services like **Resend** require secret API keys. If you put API keys in React client code, anyone inspecting the browser source code could steal your key and send emails from your domain!
 - By keeping logic inside Supabase Edge Functions, secrets remain 100% server-side in encrypted environment variables (`RESEND_API_KEY`).
 
 ### Clean Separation of Concerns
+
 - **UI Components** (`Contact.tsx`): Focus strictly on rendering inputs, animations, and user feedback.
 - **API Client** (`contact.api.ts`): Handles network requests and data transformation.
 - **Edge Functions** (`supabase/functions/`): Handle business rules, security, rate limiting, and third-party integrations.

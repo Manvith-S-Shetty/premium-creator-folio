@@ -13,13 +13,10 @@ Deno.serve(async (req: Request) => {
   }
 
   if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ success: false, message: "Method not allowed" }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ success: false, message: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -32,7 +29,7 @@ Deno.serve(async (req: Request) => {
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -42,12 +39,13 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({
           success: false,
-          message: "All fields (messageId, recipientEmail, replySubject, replyMessage) are required.",
+          message:
+            "All fields (messageId, recipientEmail, replySubject, replyMessage) are required.",
         }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -61,7 +59,7 @@ Deno.serve(async (req: Request) => {
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -69,7 +67,7 @@ Deno.serve(async (req: Request) => {
 
     // Outbound email dispatch via Resend
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    
+
     if (resendApiKey) {
       const resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -103,7 +101,7 @@ Deno.serve(async (req: Request) => {
           {
             status: 502,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
       }
     } else {
@@ -128,16 +126,13 @@ Deno.serve(async (req: Request) => {
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (err: any) {
     console.error("Unhandled error in reply-contact Edge Function:", err);
-    return new Response(
-      JSON.stringify({ success: false, message: "Internal server error" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ success: false, message: "Internal server error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

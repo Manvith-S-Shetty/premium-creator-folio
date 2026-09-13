@@ -19,13 +19,17 @@ export function Hero() {
   const { personalInfo, resumeUrl, socialLinks: dbSocialLinks } = usePortfolioData();
   const isResumeAvailable = isValidWebUrl(resumeUrl);
 
-  const socialLinksMap = Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
-    ? dbSocialLinks.reduce((acc, curr) => ({ ...acc, [curr.platform]: curr.url }), {} as Record<string, string>)
-    : {
-        github: "https://github.com/Manvith-S-Shetty",
-        linkedin: "https://linkedin.com/in/manvith-s-shetty-51b16b283",
-        instagram: "https://www.instagram.com/the.day_._dreamer.____",
-      };
+  const socialLinksMap =
+    Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
+      ? dbSocialLinks.reduce(
+          (acc, curr) => ({ ...acc, [curr.platform]: curr.url }),
+          {} as Record<string, string>,
+        )
+      : {
+          github: "https://github.com/Manvith-S-Shetty",
+          linkedin: "https://linkedin.com/in/manvith-s-shetty-51b16b283",
+          instagram: "https://www.instagram.com/the.day_._dreamer.____",
+        };
 
   return (
     <section
@@ -53,10 +57,13 @@ export function Hero() {
           </div>
 
           <h1 className="font-display text-5xl md:text-7xl leading-[1.02] tracking-tight">
-            <span className="text-gradient">{personalInfo.displayName || personalInfo.fullName}</span>
+            <span className="text-gradient">
+              {personalInfo.displayName || personalInfo.fullName}
+            </span>
           </h1>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-            {personalInfo.primaryTitle} · <span className="text-foreground/80">AI/ML Enthusiast</span>
+            {personalInfo.primaryTitle} ·{" "}
+            <span className="text-foreground/80">AI/ML Enthusiast</span>
           </p>
           <p className="mt-6 max-w-xl text-base md:text-lg text-muted-foreground leading-relaxed">
             {personalInfo.bio}
@@ -81,11 +88,11 @@ export function Hero() {
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full border border-border bg-card/40 backdrop-blur-md px-5 py-2.5 text-sm text-foreground/90",
-                    "hover:bg-card/70 hover:border-foreground/30 transition-colors",
+                    "inline-flex items-center gap-2 rounded-full border border-border/80 bg-white/[0.03] backdrop-blur-md px-4 py-2 text-xs font-medium text-foreground/80",
+                    "hover:bg-white/[0.08] hover:border-foreground/30 hover:text-foreground transition-all duration-200",
                   )}
                 >
-                  <Icon size={16} />
+                  <Icon size={14} />
                   {label}
                 </a>
               ))}
@@ -96,21 +103,21 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
-          className="order-1 md:order-2 flex flex-col items-center md:items-end gap-4"
+          className="order-1 md:order-2 flex flex-col items-center md:items-end gap-5"
         >
-          <div className="relative">
-            <div className="absolute -inset-3 rounded-[2rem] accent-gradient opacity-40 blur-2xl" />
-            <div className="relative rounded-[1.75rem] p-[1.5px] accent-gradient">
+          <div className="relative group">
+            <div className="absolute -inset-3 rounded-3xl accent-gradient opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-60" />
+            <div className="relative rounded-[1.75rem] p-[1.5px] accent-gradient overflow-hidden">
               <img
                 src={personalInfo.photoUrl || "/images/me.jpeg"}
                 alt={personalInfo.fullName}
                 width={360}
                 height={400}
-                className="rounded-3xl w-[300px] md:w-[380px] aspect-[4/5] object-cover bg-card"
+                className="rounded-2xl w-[300px] md:w-[380px] aspect-[4/5] object-cover bg-card transition-transform duration-500 group-hover:scale-[1.015]"
               />
             </div>
           </div>
-          <div className="flex w-full gap-4 justify-center">
+          <div className="flex w-full gap-3.5 justify-center">
             {isResumeAvailable ? (
               <a
                 href={resumeUrl}
@@ -118,10 +125,10 @@ export function Hero() {
                 rel="noopener noreferrer"
                 download
                 aria-label="Download Resume"
-                className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+                className="group flex-1 inline-flex items-center justify-center gap-2.5 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-3.5 text-sm font-medium hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
               >
                 <Download size={16} />
-                Resume 
+                Resume
                 <ArrowRight
                   size={14}
                   className="transition-transform duration-300 group-hover:translate-x-1"
@@ -134,7 +141,7 @@ export function Hero() {
                 aria-disabled="true"
                 aria-label="Resume unavailable"
                 title="Resume unavailable"
-                className="group flex-1 inline-flex items-center justify-center gap-4 rounded-full border border-border/50 bg-card/30 backdrop-blur-md px-5 py-4 text-sm font-medium opacity-50 cursor-not-allowed text-muted-foreground"
+                className="group flex-1 inline-flex items-center justify-center gap-2.5 rounded-full border border-border/50 bg-card/30 backdrop-blur-md px-5 py-3.5 text-sm font-medium opacity-50 cursor-not-allowed text-muted-foreground"
               >
                 <Download size={16} />
                 Resume
@@ -143,7 +150,7 @@ export function Hero() {
             )}
             <a
               href="#contact"
-              className="group flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-4 text-sm font-medium hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+              className="group flex-1 inline-flex items-center justify-center gap-2 rounded-full accent-gradient text-white px-5 py-3.5 text-sm font-medium shadow-[var(--shadow-glow)] hover:brightness-110 transition-all duration-300"
             >
               <Mail size={16} />
               Contact
@@ -158,4 +165,3 @@ export function Hero() {
     </section>
   );
 }
-

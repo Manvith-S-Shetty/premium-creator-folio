@@ -7,19 +7,14 @@ export interface ContactRequest {
   message: string;
 }
 
-export async function sendContactMessage(
-  data: ContactRequest
-) {
-  const response = await fetch(
-    `${FUNCTIONS_URL}/contact`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
+export async function sendContactMessage(data: ContactRequest) {
+  const response = await fetch(`${FUNCTIONS_URL}/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
   const result = await response.json();
 

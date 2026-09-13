@@ -1,19 +1,29 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { mediaApi } from '@/lib/api/media.api';
-import { supabase } from '@/config/supabase';
-import { MediaFileDTO } from '@/lib/types/cms.types';
-import { ImageUploader } from '@/components/admin/ui/ImageUploader';
-import { FileText, Image as ImageIcon, Trash2, Copy, Check, Search, FolderOpen } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { mediaApi } from "@/lib/api/media.api";
+import { supabase } from "@/config/supabase";
+import { MediaFileDTO } from "@/lib/types/cms.types";
+import { ImageUploader } from "@/components/admin/ui/ImageUploader";
+import {
+  FileText,
+  Image as ImageIcon,
+  Trash2,
+  Copy,
+  Check,
+  Search,
+  FolderOpen,
+} from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/media')({
+export const Route = createFileRoute("/admin/_admin/media")({
   component: MediaLibraryManager,
 });
 
 function MediaLibraryManager() {
-  const [activeBucket, setActiveBucket] = useState<'portfolio-media' | 'certificates' | 'resumes'>('portfolio-media');
+  const [activeBucket, setActiveBucket] = useState<"portfolio-media" | "certificates" | "resumes">(
+    "portfolio-media",
+  );
   const [files, setFiles] = useState<MediaFileDTO[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const loadMedia = () => {
@@ -39,7 +49,7 @@ function MediaLibraryManager() {
   };
 
   const filteredFiles = files.filter((f) =>
-    f.fileName.toLowerCase().includes(searchQuery.toLowerCase())
+    f.fileName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -47,19 +57,21 @@ function MediaLibraryManager() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-100">Media Library</h1>
-          <p className="text-sm text-slate-400">Browse, copy URLs, or delete stored files across storage buckets</p>
+          <p className="text-sm text-slate-400">
+            Browse, copy URLs, or delete stored files across storage buckets
+          </p>
         </div>
 
         {/* Bucket Tabs */}
         <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-1 backdrop-blur-xl">
-          {(['portfolio-media', 'certificates', 'resumes'] as const).map((b) => (
+          {(["portfolio-media", "certificates", "resumes"] as const).map((b) => (
             <button
               key={b}
               onClick={() => setActiveBucket(b)}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                 activeBucket === b
-                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
               {b}
@@ -73,7 +85,7 @@ function MediaLibraryManager() {
         <ImageUploader
           label={`Upload Asset to ${activeBucket}`}
           bucketName={activeBucket}
-          accept={activeBucket === 'resumes' ? 'application/pdf' : 'image/*,application/pdf'}
+          accept={activeBucket === "resumes" ? "application/pdf" : "image/*,application/pdf"}
           onChange={() => loadMedia()}
         />
       </div>
@@ -94,13 +106,16 @@ function MediaLibraryManager() {
       {filteredFiles.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-12 text-center">
           <FolderOpen className="mx-auto h-12 w-12 text-slate-600" />
-          <p className="mt-4 text-sm font-medium text-slate-400">No files found in {activeBucket}</p>
+          <p className="mt-4 text-sm font-medium text-slate-400">
+            No files found in {activeBucket}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {filteredFiles.map((file) => {
-            const publicUrl = supabase.storage.from(file.bucketName).getPublicUrl(file.storagePath).data.publicUrl;
-            const isPdf = file.mimeType.includes('pdf') || file.fileName.endsWith('.pdf');
+            const publicUrl = supabase.storage.from(file.bucketName).getPublicUrl(file.storagePath)
+              .data.publicUrl;
+            const isPdf = file.mimeType.includes("pdf") || file.fileName.endsWith(".pdf");
 
             return (
               <div
@@ -111,7 +126,11 @@ function MediaLibraryManager() {
                   {isPdf ? (
                     <FileText className="h-12 w-12 text-cyan-400" />
                   ) : (
-                    <img src={publicUrl} alt={file.fileName} className="h-full w-full object-cover" />
+                    <img
+                      src={publicUrl}
+                      alt={file.fileName}
+                      className="h-full w-full object-cover"
+                    />
                   )}
                 </div>
 

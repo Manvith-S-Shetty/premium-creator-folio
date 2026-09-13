@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { contactApi } from '@/lib/api/contact.api';
-import { Mail } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { contactApi } from "@/lib/api/contact.api";
+import { Mail } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/')({
+export const Route = createFileRoute("/admin/_admin/")({
   component: AdminDashboardOverview,
 });
 
@@ -12,7 +12,7 @@ function AdminDashboardOverview() {
 
   useEffect(() => {
     contactApi
-      .getMessages({ status: 'unread', pageSize: 1 })
+      .getMessages({ status: "unread", pageSize: 1 })
       .then((res) => setUnreadCount(res.totalCount))
       .catch(() => setUnreadCount(0));
   }, []);

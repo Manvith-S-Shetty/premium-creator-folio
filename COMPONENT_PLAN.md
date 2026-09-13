@@ -33,10 +33,11 @@ src/
 ## 2. Phase 2 Component UI Additions
 
 ### 2.1 Settings Page Updates (`src/routes/admin/_admin/settings.tsx`)
-* **Feature Toggles Panel**:
+
+- **Feature Toggles Panel**:
   - Grid of 8 interactive switch controls for `show_certificates`, `show_experience`, `show_skills`, `show_resume`, `show_education`, `show_contact`, `show_achievements`, `show_hackathons`.
   - Controlled state bound to `site_settings` state.
-* **Expanded SEO Configuration Panel**:
+- **Expanded SEO Configuration Panel**:
   - `FormInput` for SEO Title (`seo_title`).
   - `FormTextArea` for Meta Description (`seo_description`).
   - `ImageUploader` for OpenGraph Share Image (`seo_og_image_url`).
@@ -44,29 +45,33 @@ src/
   - Select dropdown for Robots Directive (`seo_robots_directive` e.g., `"index, follow"`, `"noindex, nofollow"`).
 
 ### 2.2 Activity Log Route (`src/routes/admin/_admin/activity.tsx`)
-* **Audit Trail Table**:
+
+- **Audit Trail Table**:
   - Table columns: Timestamp (`created_at`), Admin (`admin_user_id`), Action Badge (`action`), Entity Type (`entity_type`), Entity ID (`entity_id`), Description (`description`).
-* **Filter Toolbar**:
+- **Filter Toolbar**:
   - Action Filter Select: `All Actions`, `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT`, `LOGIN_FAILED`.
   - Entity Type Filter Select: `All Entities`, `PROJECT`, `CERTIFICATE`, `SKILL`, `SETTINGS`, `AUTH`.
   - Search Input: Free-text search on description.
 
 ### 2.3 Status Filter & Badge Components
-* **Status Badge (`StatusBadge.tsx`)**:
+
+- **Status Badge (`StatusBadge.tsx`)**:
   - Visual indicator pill with color coding:
     - `published` -> Emerald pill (`bg-emerald-500/10 text-emerald-400 border-emerald-500/30`)
     - `draft` -> Amber pill (`bg-amber-500/10 text-amber-400 border-amber-500/30`)
     - `archived` -> Slate pill (`bg-slate-500/10 text-slate-400 border-slate-500/30`)
-* **Status Filter Tabs**:
+- **Status Filter Tabs**:
   - Added to list views in `projects.tsx`, `certificates.tsx`, `achievements.tsx`, and `hackathons.tsx`.
   - Tab options: `All`, `Published`, `Draft`, `Archived`.
-* **Form Status Dropdown Selector**:
+- **Form Status Dropdown Selector**:
   - Select control added to create/edit form drawers/modals allowing status selection (`Draft`, `Published`, `Archived`).
 
 ---
 
 ## 3. Public Section Visibility Guarding
+
 Public section components (`About.tsx`, `ProjectsSection.tsx`, `Certificates.tsx`, etc.) integrate with `usePortfolioData()`:
+
 ```tsx
 const { settings, certificates } = usePortfolioData();
 

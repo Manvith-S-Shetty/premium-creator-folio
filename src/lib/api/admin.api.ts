@@ -1,8 +1,16 @@
-import { supabase } from '@/config/supabase';
-import { 
-  PersonalInfoDTO, SiteSettingsDTO, SocialLinkDTO, ProjectDTO, CertificateDTO, 
-  SkillDTO, ExperienceDTO, EducationDTO, AchievementDTO, HackathonDTO 
-} from '../types/cms.types';
+import { supabase } from "@/config/supabase";
+import {
+  PersonalInfoDTO,
+  SiteSettingsDTO,
+  SocialLinkDTO,
+  ProjectDTO,
+  CertificateDTO,
+  SkillDTO,
+  ExperienceDTO,
+  EducationDTO,
+  AchievementDTO,
+  HackathonDTO,
+} from "../types/cms.types";
 
 export const adminApi = {
   // Upsert Personal Info (Hero & About)
@@ -26,7 +34,7 @@ export const adminApi = {
       is_available: info.isAvailable,
     };
 
-    const { error } = await supabase.from('personal_info').upsert(payload);
+    const { error } = await supabase.from("personal_info").upsert(payload);
     if (error) throw error;
   },
 
@@ -42,7 +50,7 @@ export const adminApi = {
       analytics_id: settings.analyticsId,
     };
 
-    const { error } = await supabase.from('site_settings').upsert(payload);
+    const { error } = await supabase.from("site_settings").upsert(payload);
     if (error) throw error;
   },
 
@@ -57,7 +65,7 @@ export const adminApi = {
       is_visible: link.isVisible,
     };
 
-    const { error } = await supabase.from('social_links').upsert(payload);
+    const { error } = await supabase.from("social_links").upsert(payload);
     if (error) throw error;
   },
 
@@ -73,13 +81,13 @@ export const adminApi = {
       display_order: skill.displayOrder,
     };
 
-    const { error } = await supabase.from('skills').upsert(payload);
+    const { error } = await supabase.from("skills").upsert(payload);
     if (error) throw error;
   },
 
   // Delete Skill
   async deleteSkill(id: string): Promise<void> {
-    const { error } = await supabase.from('skills').delete().eq('id', id);
+    const { error } = await supabase.from("skills").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -102,9 +110,9 @@ export const adminApi = {
     };
 
     const { data: projectRow, error: projectError } = await supabase
-      .from('projects')
+      .from("projects")
       .upsert(payload)
-      .select('id')
+      .select("id")
       .single();
 
     if (projectError) throw projectError;
@@ -112,21 +120,21 @@ export const adminApi = {
 
     // Sync project_skills Junction Table (Delete-then-Insert)
     if (project.skillIds !== undefined) {
-      await supabase.from('project_skills').delete().eq('project_id', projectId);
+      await supabase.from("project_skills").delete().eq("project_id", projectId);
 
       if (project.skillIds.length > 0) {
         const skillRows = project.skillIds.map((skillId) => ({
           project_id: projectId,
           skill_id: skillId,
         }));
-        const { error: skillSyncError } = await supabase.from('project_skills').insert(skillRows);
+        const { error: skillSyncError } = await supabase.from("project_skills").insert(skillRows);
         if (skillSyncError) throw skillSyncError;
       }
     }
 
     // Sync project_screenshots (Delete-then-Insert)
     if (project.screenshots !== undefined) {
-      await supabase.from('project_screenshots').delete().eq('project_id', projectId);
+      await supabase.from("project_screenshots").delete().eq("project_id", projectId);
 
       if (project.screenshots.length > 0) {
         const screenshotRows = project.screenshots.map((url, idx) => ({
@@ -134,7 +142,9 @@ export const adminApi = {
           image_url: url,
           display_order: idx,
         }));
-        const { error: screenshotError } = await supabase.from('project_screenshots').insert(screenshotRows);
+        const { error: screenshotError } = await supabase
+          .from("project_screenshots")
+          .insert(screenshotRows);
         if (screenshotError) throw screenshotError;
       }
     }
@@ -142,7 +152,7 @@ export const adminApi = {
 
   // Delete Project
   async deleteProject(id: string): Promise<void> {
-    const { error } = await supabase.from('projects').delete().eq('id', id);
+    const { error } = await supabase.from("projects").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -164,13 +174,13 @@ export const adminApi = {
       display_order: cert.displayOrder,
     };
 
-    const { error } = await supabase.from('certificates').upsert(payload);
+    const { error } = await supabase.from("certificates").upsert(payload);
     if (error) throw error;
   },
 
   // Delete Certificate
   async deleteCertificate(id: string): Promise<void> {
-    const { error } = await supabase.from('certificates').delete().eq('id', id);
+    const { error } = await supabase.from("certificates").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -191,9 +201,9 @@ export const adminApi = {
     };
 
     const { data: expRow, error: expError } = await supabase
-      .from('experience')
+      .from("experience")
       .upsert(payload)
-      .select('id')
+      .select("id")
       .single();
 
     if (expError) throw expError;
@@ -201,14 +211,14 @@ export const adminApi = {
 
     // Sync experience_skills Junction Table (Delete-then-Insert)
     if (experience.skillIds !== undefined) {
-      await supabase.from('experience_skills').delete().eq('experience_id', expId);
+      await supabase.from("experience_skills").delete().eq("experience_id", expId);
 
       if (experience.skillIds.length > 0) {
         const skillRows = experience.skillIds.map((skillId) => ({
           experience_id: expId,
           skill_id: skillId,
         }));
-        const { error: expSkillError } = await supabase.from('experience_skills').insert(skillRows);
+        const { error: expSkillError } = await supabase.from("experience_skills").insert(skillRows);
         if (expSkillError) throw expSkillError;
       }
     }
@@ -216,7 +226,7 @@ export const adminApi = {
 
   // Delete Experience
   async deleteExperience(id: string): Promise<void> {
-    const { error } = await supabase.from('experience').delete().eq('id', id);
+    const { error } = await supabase.from("experience").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -234,13 +244,13 @@ export const adminApi = {
       display_order: edu.displayOrder,
     };
 
-    const { error } = await supabase.from('education').upsert(payload);
+    const { error } = await supabase.from("education").upsert(payload);
     if (error) throw error;
   },
 
   // Delete Education
   async deleteEducation(id: string): Promise<void> {
-    const { error } = await supabase.from('education').delete().eq('id', id);
+    const { error } = await supabase.from("education").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -257,13 +267,13 @@ export const adminApi = {
       display_order: achievement.displayOrder,
     };
 
-    const { error } = await supabase.from('achievements').upsert(payload);
+    const { error } = await supabase.from("achievements").upsert(payload);
     if (error) throw error;
   },
 
   // Delete Achievement
   async deleteAchievement(id: string): Promise<void> {
-    const { error } = await supabase.from('achievements').delete().eq('id', id);
+    const { error } = await supabase.from("achievements").delete().eq("id", id);
     if (error) throw error;
   },
 
@@ -282,32 +292,32 @@ export const adminApi = {
       display_order: hack.displayOrder,
     };
 
-    const { error } = await supabase.from('hackathons').upsert(payload);
+    const { error } = await supabase.from("hackathons").upsert(payload);
     if (error) throw error;
   },
 
   // Delete Hackathon
   async deleteHackathon(id: string): Promise<void> {
-    const { error } = await supabase.from('hackathons').delete().eq('id', id);
+    const { error } = await supabase.from("hackathons").delete().eq("id", id);
     if (error) throw error;
   },
 
   // Upload Resume PDF and set as Active
   async uploadActiveResume(file: File, title: string): Promise<string> {
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `resume_${Date.now()}.${fileExt}`;
     const filePath = `resumes/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('resumes')
+      .from("resumes")
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) throw uploadError;
 
-    const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(filePath);
+    const { data: urlData } = supabase.storage.from("resumes").getPublicUrl(filePath);
     const pdfUrl = urlData.publicUrl;
 
-    const { error: dbError } = await supabase.from('resumes').insert({
+    const { error: dbError } = await supabase.from("resumes").insert({
       title,
       pdf_url: pdfUrl,
       is_active: true,
@@ -319,12 +329,12 @@ export const adminApi = {
 
   // Set/create active resume row from URL
   async createActiveResume(title: string, pdfUrl: string): Promise<void> {
-    const { error } = await supabase.from('resumes').insert({
+    const { error } = await supabase.from("resumes").insert({
       title,
       pdf_url: pdfUrl,
       is_active: true,
     });
 
     if (error) throw error;
-  }
+  },
 };

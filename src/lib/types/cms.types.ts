@@ -20,7 +20,7 @@ export type PersonalInfoDTO = {
 
 export type SiteSettingsDTO = {
   id: string;
-  defaultTheme: 'dark' | 'light';
+  defaultTheme: "dark" | "light";
   accentColor: string;
   seoMetaTitle: string;
   seoMetaDescription: string;
@@ -41,7 +41,7 @@ export type SocialLinkDTO = {
 export type SkillDTO = {
   id: string;
   name: string;
-  category: 'Languages' | 'Frontend' | 'Backend' | 'Database' | 'AI / ML' | 'Tools' | 'Cloud';
+  category: "Languages" | "Frontend" | "Backend" | "Database" | "AI / ML" | "Tools" | "Cloud";
   iconName?: string;
   proficiencyLevel: number;
   yearsExperience?: number;
@@ -61,7 +61,7 @@ export type ProjectDTO = {
   videoUrl?: string;
   category: string;
   difficulty?: string;
-  status: 'Completed' | 'In Progress' | 'Archived';
+  status: "Completed" | "In Progress" | "Archived";
   isFeatured: boolean;
   isPublished: boolean;
   displayOrder: number;
@@ -93,7 +93,7 @@ export type ExperienceDTO = {
   company: string;
   role: string;
   location?: string;
-  employmentType: 'Full-time' | 'Part-time' | 'Internship' | 'Contract' | 'Freelance';
+  employmentType: "Full-time" | "Part-time" | "Internship" | "Contract" | "Freelance";
   startDate: string;
   endDate?: string;
   isCurrent: boolean;
