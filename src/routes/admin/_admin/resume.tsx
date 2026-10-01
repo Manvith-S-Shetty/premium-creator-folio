@@ -1,19 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { ResumeDTO } from '@/lib/types/cms.types';
-import { ImageUploader } from '@/components/admin/ui/ImageUploader';
-import { FormInput } from '@/components/admin/ui/FormInput';
-import { FileText, CheckCircle2, Upload } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { ResumeDTO } from "@/lib/types/cms.types";
+import { ImageUploader } from "@/components/admin/ui/ImageUploader";
+import { FormInput } from "@/components/admin/ui/FormInput";
+import { FileText, CheckCircle2, Upload } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/resume')({
+export const Route = createFileRoute("/admin/_admin/resume")({
   component: ResumeManager,
 });
 
 function ResumeManager() {
   const [activeResume, setActiveResume] = useState<ResumeDTO | null>(null);
-  const [title, setTitle] = useState('SWE Resume');
+  const [title, setTitle] = useState("SWE Resume");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
@@ -24,18 +24,13 @@ function ResumeManager() {
   const handleUploadNew = async (pdfUrl: string) => {
     setIsUploading(true);
     try {
-      setActiveResume({
-        id: 'new',
-        title,
-        pdfUrl,
-        version: (activeResume?.version || 0) + 1,
-        isActive: true,
-        uploadedAt: new Date().toISOString(),
-      });
+      await adminApi.createActiveResume(title, pdfUrl);
+      const updated = await publicApi.getActiveResume();
+      setActiveResume(updated);
       setUploadSuccess(true);
       setTimeout(() => setUploadSuccess(false), 3000);
     } catch (err: any) {
-      alert(err.message || 'Failed to set active resume');
+      alert(err.message || "Failed to set active resume");
     } finally {
       setIsUploading(false);
     }
@@ -45,7 +40,9 @@ function ResumeManager() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-100">Resume Version Manager</h1>
-        <p className="text-sm text-slate-400">Upload a new resume PDF. The active resume automatically updates the public CTA link.</p>
+        <p className="text-sm text-slate-400">
+          Upload a new resume PDF. The active resume automatically updates the public CTA link.
+        </p>
       </div>
 
       {uploadSuccess && (
@@ -62,7 +59,9 @@ function ResumeManager() {
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Active Resume</span>
+              <span className="text-xs uppercase tracking-wider text-emerald-400 font-semibold">
+                Active Resume
+              </span>
               <h3 className="text-lg font-bold text-slate-100">{activeResume.title}</h3>
             </div>
           </div>
@@ -82,7 +81,7 @@ function ResumeManager() {
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl space-y-6">
         <h3 className="text-lg font-semibold text-slate-200">Upload New Resume Version</h3>
-        
+
         <FormInput
           label="Resume Title / Label"
           value={title}

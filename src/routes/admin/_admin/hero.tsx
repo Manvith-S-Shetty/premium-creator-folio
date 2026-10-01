@@ -1,28 +1,28 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { FormInput, FormTextArea } from '@/components/admin/ui/FormInput';
-import { ImageUploader } from '@/components/admin/ui/ImageUploader';
-import { Save, CheckCircle2 } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { FormInput, FormTextArea } from "@/components/admin/ui/FormInput";
+import { ImageUploader } from "@/components/admin/ui/ImageUploader";
+import { Save, CheckCircle2 } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/hero')({
+export const Route = createFileRoute("/admin/_admin/hero")({
   component: HeroManager,
 });
 
 function HeroManager() {
   const [formData, setFormData] = useState({
-    id: '',
-    fullName: '',
-    displayName: '',
-    primaryTitle: '',
-    taglineShort: '',
-    bio: '',
-    careerObjective: '',
-    location: '',
-    email: '',
-    phone: '',
-    photoUrl: '',
+    id: "",
+    fullName: "",
+    displayName: "",
+    primaryTitle: "",
+    taglineShort: "",
+    bio: "",
+    careerObjective: "",
+    location: "",
+    email: "",
+    phone: "",
+    photoUrl: "",
     isAvailable: true,
   });
 
@@ -34,16 +34,16 @@ function HeroManager() {
       if (info) {
         setFormData({
           id: info.id,
-          fullName: info.fullName || '',
-          displayName: info.displayName || '',
-          primaryTitle: info.primaryTitle || '',
-          taglineShort: info.taglineShort || '',
-          bio: info.bio || '',
-          careerObjective: info.careerObjective || '',
-          location: info.location || '',
-          email: info.email || '',
-          phone: info.phone || '',
-          photoUrl: info.photoUrl || '',
+          fullName: info.fullName || "",
+          displayName: info.displayName || "",
+          primaryTitle: info.primaryTitle || "",
+          taglineShort: info.taglineShort || "",
+          bio: info.bio || "",
+          careerObjective: info.careerObjective || "",
+          location: info.location || "",
+          email: info.email || "",
+          phone: info.phone || "",
+          photoUrl: info.photoUrl || "",
           isAvailable: info.isAvailable ?? true,
         });
       }
@@ -60,7 +60,7 @@ function HeroManager() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
-      alert(err.message || 'Failed to save hero information');
+      alert(err.message || "Failed to save hero information");
     } finally {
       setIsSaving(false);
     }
@@ -70,7 +70,9 @@ function HeroManager() {
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">Hero Identity Manager</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+            Hero Identity Manager
+          </h1>
           <p className="text-sm text-slate-400">Manage main name, title, bio, and hero photo</p>
         </div>
         {saveSuccess && (
@@ -81,7 +83,10 @@ function HeroManager() {
         )}
       </div>
 
-      <form onSubmit={handleSave} className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+      <form
+        onSubmit={handleSave}
+        className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+      >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormInput
             label="Full Name"
@@ -163,7 +168,7 @@ function HeroManager() {
             className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:from-cyan-400 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-50"
           >
             <Save className="h-4 w-4" />
-            {isSaving ? 'Saving Changes...' : 'Save Hero Information'}
+            {isSaving ? "Saving Changes..." : "Save Hero Information"}
           </button>
         </div>
       </form>

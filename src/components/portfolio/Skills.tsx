@@ -6,13 +6,17 @@ import { Section } from "./Section";
 export function Skills() {
   const { skills: dbSkills } = usePortfolioData();
 
-  const groupedSkills = Array.isArray(dbSkills) && dbSkills.length > 0
-    ? dbSkills.reduce((acc, skill) => {
-        if (!acc[skill.category]) acc[skill.category] = [];
-        acc[skill.category].push(skill.name);
-        return acc;
-      }, {} as Record<string, string[]>)
-    : staticSkills;
+  const groupedSkills =
+    Array.isArray(dbSkills) && dbSkills.length > 0
+      ? dbSkills.reduce(
+          (acc, skill) => {
+            if (!acc[skill.category]) acc[skill.category] = [];
+            acc[skill.category].push(skill.name);
+            return acc;
+          },
+          {} as Record<string, string[]>,
+        )
+      : staticSkills;
 
   const entries = Object.entries(groupedSkills);
 
@@ -21,7 +25,7 @@ export function Skills() {
       id="skills"
       eyebrow="Skills"
       title="Tools I build with"
-      description="A pragmatic stack I reach for — the tools that ship products, not the ones on my resume for the sake of it."
+      description="A pragmatic stack I use to build reliable applications, from fast prototypes to production-ready systems."
     >
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {entries.map(([category, items], i) => (
@@ -41,7 +45,7 @@ export function Skills() {
               {items.map((s) => (
                 <span
                   key={s}
-                  className="text-xs rounded-md border border-border bg-white/[0.03] px-2.5 py-1 text-foreground/75 transition-colors group-hover:border-foreground/20"
+                  className="text-xs rounded-full border border-border bg-white/[0.03] px-3 py-1 text-foreground/75 transition-colors group-hover:border-foreground/20"
                 >
                   {s}
                 </span>
@@ -53,4 +57,3 @@ export function Skills() {
     </Section>
   );
 }
-

@@ -1,74 +1,74 @@
-import { useQuery } from '@tanstack/react-query';
-import { publicApi } from '@/lib/api/public.api';
-import { personalInfo as staticPersonalInfo, projects as staticProjects } from '@/config/data';
+import { useQuery } from "@tanstack/react-query";
+import { publicApi } from "@/lib/api/public.api";
+import { personalInfo as staticPersonalInfo, projects as staticProjects } from "@/config/data";
 
 export function usePortfolioData() {
   const personalInfoQuery = useQuery({
-    queryKey: ['personalInfo'],
+    queryKey: ["personalInfo"],
     queryFn: publicApi.getPersonalInfo,
     staleTime: 10 * 60 * 1000,
     placeholderData: staticPersonalInfo as any,
   });
 
   const siteSettingsQuery = useQuery({
-    queryKey: ['siteSettings'],
+    queryKey: ["siteSettings"],
     queryFn: publicApi.getSiteSettings,
     staleTime: 10 * 60 * 1000,
   });
 
   const socialLinksQuery = useQuery({
-    queryKey: ['socialLinks'],
+    queryKey: ["socialLinks"],
     queryFn: publicApi.getSocialLinks,
     staleTime: 10 * 60 * 1000,
   });
 
   const skillsQuery = useQuery({
-    queryKey: ['skills'],
+    queryKey: ["skills"],
     queryFn: publicApi.getSkills,
     staleTime: 10 * 60 * 1000,
   });
 
   const projectsQuery = useQuery({
-    queryKey: ['projects', 'published'],
+    queryKey: ["projects", "published"],
     queryFn: publicApi.getPublishedProjects,
     staleTime: 10 * 60 * 1000,
     placeholderData: staticProjects as any,
   });
 
   const certificatesQuery = useQuery({
-    queryKey: ['certificates'],
+    queryKey: ["certificates"],
     queryFn: publicApi.getCertificates,
     staleTime: 10 * 60 * 1000,
   });
 
   const experienceQuery = useQuery({
-    queryKey: ['experience'],
+    queryKey: ["experience"],
     queryFn: publicApi.getExperience,
     staleTime: 10 * 60 * 1000,
   });
 
   const educationQuery = useQuery({
-    queryKey: ['education'],
+    queryKey: ["education"],
     queryFn: publicApi.getEducation,
     staleTime: 10 * 60 * 1000,
   });
 
   const achievementsQuery = useQuery({
-    queryKey: ['achievements'],
+    queryKey: ["achievements"],
     queryFn: publicApi.getAchievements,
     staleTime: 10 * 60 * 1000,
   });
 
   const hackathonsQuery = useQuery({
-    queryKey: ['hackathons'],
+    queryKey: ["hackathons"],
     queryFn: publicApi.getHackathons,
     staleTime: 10 * 60 * 1000,
   });
 
   const resumeQuery = useQuery({
-    queryKey: ['resume', 'active'],
+    queryKey: ["resume", "active"],
     queryFn: publicApi.getActiveResume,
-    staleTime: 30 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
   });
 
   return {
@@ -82,7 +82,7 @@ export function usePortfolioData() {
     education: educationQuery.data || [],
     achievements: achievementsQuery.data || [],
     hackathons: hackathonsQuery.data || [],
-    resumeUrl: resumeQuery.data?.pdfUrl || (staticPersonalInfo as any).resume || '',
+    resumeUrl: resumeQuery.data?.pdfUrl || "",
     isLoading: personalInfoQuery.isLoading || projectsQuery.isLoading,
     isError: personalInfoQuery.isError || projectsQuery.isError,
   };

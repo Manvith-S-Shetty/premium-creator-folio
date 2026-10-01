@@ -8,7 +8,7 @@ This document defines TypeScript Data Transfer Objects (DTOs), database client m
 
 ```typescript
 // Phase 2: Content Lifecycle Status
-export type ContentStatus = 'draft' | 'published' | 'archived';
+export type ContentStatus = "draft" | "published" | "archived";
 
 // Phase 2: Extended Site Settings DTO
 export interface SiteSettingsDTO {
@@ -125,8 +125,8 @@ export interface HackathonDTO {
 ### 2.1 Activity Log API (`src/lib/api/activity.api.ts`)
 
 ```typescript
-import { supabase } from '@/config/supabase';
-import { ActivityLogDTO, ActivityLogFilterDTO } from '../types/cms.types';
+import { supabase } from "@/config/supabase";
+import { ActivityLogDTO, ActivityLogFilterDTO } from "../types/cms.types";
 
 export const activityApi = {
   // Record a new audit log entry
@@ -134,10 +134,12 @@ export const activityApi = {
     action: string,
     entityType: string,
     entityId?: string,
-    description?: string
+    description?: string,
   ): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from('activity_log').insert({
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    await supabase.from("activity_log").insert({
       admin_user_id: user?.id || null,
       action,
       entity_type: entityType,
@@ -148,10 +150,10 @@ export const activityApi = {
 
   // Fetch audit logs with filtering
   async getActivityLogs(filters?: ActivityLogFilterDTO): Promise<ActivityLogDTO[]> {
-    let query = supabase.from('activity_log').select('*').order('created_at', { ascending: false });
+    let query = supabase.from("activity_log").select("*").order("created_at", { ascending: false });
 
-    if (filters?.action) query = query.eq('action', filters.action);
-    if (filters?.entityType) query = query.eq('entity_type', filters.entityType);
+    if (filters?.action) query = query.eq("action", filters.action);
+    if (filters?.entityType) query = query.eq("entity_type", filters.entityType);
     if (filters?.limit) query = query.limit(filters.limit);
 
     const { data, error } = await query;
@@ -166,7 +168,7 @@ export const activityApi = {
       description: item.description,
       createdAt: item.created_at,
     }));
-  }
+  },
 };
 ```
 
@@ -202,6 +204,7 @@ async upsertSiteSettings(settings: Partial<SiteSettingsDTO>): Promise<void> {
 ```
 
 ### 2.3 Public API Status Filtering (`src/lib/api/public.api.ts`)
+
 ```typescript
 async getProjects(): Promise<ProjectDTO[]> {
   const { data, error } = await supabase

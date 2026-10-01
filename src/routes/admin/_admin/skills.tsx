@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { SkillDTO } from '@/lib/types/cms.types';
-import { FormInput } from '@/components/admin/ui/FormInput';
-import { Plus, Trash2, Edit2, CheckCircle2, X } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { SkillDTO } from "@/lib/types/cms.types";
+import { FormInput } from "@/components/admin/ui/FormInput";
+import { Plus, Trash2, Edit2, CheckCircle2, X } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/skills')({
+export const Route = createFileRoute("/admin/_admin/skills")({
   component: SkillsManager,
 });
 
@@ -30,8 +30,8 @@ function SkillsManager() {
 
   const handleNew = () => {
     setEditingSkill({
-      name: '',
-      category: 'Languages',
+      name: "",
+      category: "Languages",
       proficiencyLevel: 85,
       yearsExperience: 2,
       displayOrder: skills.length + 1,
@@ -39,7 +39,7 @@ function SkillsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this skill?')) {
+    if (confirm("Are you sure you want to delete this skill?")) {
       await adminApi.deleteSkill(id);
       loadSkills();
     }
@@ -57,7 +57,7 @@ function SkillsManager() {
       setEditingSkill(null);
       loadSkills();
     } catch (err: any) {
-      alert(err.message || 'Failed to save skill');
+      alert(err.message || "Failed to save skill");
     } finally {
       setIsSaving(false);
     }
@@ -67,8 +67,12 @@ function SkillsManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">Skills Matrix Manager</h1>
-          <p className="text-sm text-slate-400">Manage technical stack categories and proficiency levels</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+            Skills Matrix Manager
+          </h1>
+          <p className="text-sm text-slate-400">
+            Manage technical stack categories and proficiency levels
+          </p>
         </div>
         <button
           onClick={handleNew}
@@ -87,12 +91,19 @@ function SkillsManager() {
       )}
 
       {editingSkill && (
-        <form onSubmit={handleSave} className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <form
+          onSubmit={handleSave}
+          className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+        >
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <h3 className="text-lg font-semibold text-slate-200">
-              {editingSkill.id ? 'Edit Skill' : 'Create New Skill'}
+              {editingSkill.id ? "Edit Skill" : "Create New Skill"}
             </h3>
-            <button type="button" onClick={() => setEditingSkill(null)} className="text-slate-400 hover:text-white">
+            <button
+              type="button"
+              onClick={() => setEditingSkill(null)}
+              className="text-slate-400 hover:text-white"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -100,15 +111,17 @@ function SkillsManager() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormInput
               label="Skill Name"
-              value={editingSkill.name || ''}
+              value={editingSkill.name || ""}
               onChange={(e) => setEditingSkill({ ...editingSkill, name: e.target.value })}
               required
             />
             <div className="space-y-1.5">
               <label className="block text-xs font-medium text-slate-300">Category</label>
               <select
-                value={editingSkill.category || 'Languages'}
-                onChange={(e) => setEditingSkill({ ...editingSkill, category: e.target.value as any })}
+                value={editingSkill.category || "Languages"}
+                onChange={(e) =>
+                  setEditingSkill({ ...editingSkill, category: e.target.value as any })
+                }
                 className="w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-slate-200 focus:border-cyan-500 focus:outline-none text-sm"
               >
                 <option value="Languages">Languages</option>
@@ -124,7 +137,9 @@ function SkillsManager() {
               label="Display Order"
               type="number"
               value={editingSkill.displayOrder || 0}
-              onChange={(e) => setEditingSkill({ ...editingSkill, displayOrder: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setEditingSkill({ ...editingSkill, displayOrder: parseInt(e.target.value) })
+              }
             />
           </div>
 
@@ -141,7 +156,7 @@ function SkillsManager() {
               disabled={isSaving}
               className="rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2 text-xs font-semibold text-white hover:from-cyan-400 hover:to-indigo-500"
             >
-              {isSaving ? 'Saving...' : 'Save Skill'}
+              {isSaving ? "Saving..." : "Save Skill"}
             </button>
           </div>
         </form>
@@ -149,9 +164,14 @@ function SkillsManager() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {skills.map((s) => (
-          <div key={s.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl flex items-center justify-between">
+          <div
+            key={s.id}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl flex items-center justify-between"
+          >
             <div>
-              <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-semibold">{s.category}</span>
+              <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-semibold">
+                {s.category}
+              </span>
               <h4 className="text-base font-bold text-slate-100">{s.name}</h4>
             </div>
             <div className="flex items-center gap-1">

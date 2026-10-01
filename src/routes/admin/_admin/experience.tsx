@@ -1,19 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { ExperienceDTO } from '@/lib/types/cms.types';
-import { FormInput, FormTextArea } from '@/components/admin/ui/FormInput';
-import { Plus, Trash2, Edit2, CheckCircle2, X } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { ExperienceDTO } from "@/lib/types/cms.types";
+import { FormInput, FormTextArea } from "@/components/admin/ui/FormInput";
+import { Plus, Trash2, Edit2, CheckCircle2, X } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/experience')({
+export const Route = createFileRoute("/admin/_admin/experience")({
   component: ExperienceManager,
 });
 
 function ExperienceManager() {
   const [expList, setExpList] = useState<ExperienceDTO[]>([]);
   const [editingExp, setEditingExp] = useState<Partial<ExperienceDTO> | null>(null);
-  const [descStr, setDescStr] = useState('');
+  const [descStr, setDescStr] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -27,25 +27,25 @@ function ExperienceManager() {
 
   const handleEdit = (exp: ExperienceDTO) => {
     setEditingExp(exp);
-    setDescStr((exp.description || []).join('\n'));
+    setDescStr((exp.description || []).join("\n"));
   };
 
   const handleNew = () => {
     setEditingExp({
-      company: '',
-      role: '',
-      location: '',
-      employmentType: 'Full-time',
-      startDate: new Date().toISOString().split('T')[0],
+      company: "",
+      role: "",
+      location: "",
+      employmentType: "Full-time",
+      startDate: new Date().toISOString().split("T")[0],
       isCurrent: false,
       description: [],
       displayOrder: expList.length + 1,
     });
-    setDescStr('');
+    setDescStr("");
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this experience record?')) {
+    if (confirm("Are you sure you want to delete this experience record?")) {
       await adminApi.deleteExperience(id);
       loadExperience();
     }
@@ -59,7 +59,7 @@ function ExperienceManager() {
     try {
       const payload = {
         ...editingExp,
-        description: descStr.split('\n').filter(Boolean),
+        description: descStr.split("\n").filter(Boolean),
       };
 
       await adminApi.upsertExperience(payload);
@@ -68,7 +68,7 @@ function ExperienceManager() {
       setEditingExp(null);
       loadExperience();
     } catch (err: any) {
-      alert(err.message || 'Failed to save experience');
+      alert(err.message || "Failed to save experience");
     } finally {
       setIsSaving(false);
     }
@@ -78,8 +78,12 @@ function ExperienceManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">Work Experience Manager</h1>
-          <p className="text-sm text-slate-400">Manage employment history, internships, and roles</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+            Work Experience Manager
+          </h1>
+          <p className="text-sm text-slate-400">
+            Manage employment history, internships, and roles
+          </p>
         </div>
         <button
           onClick={handleNew}
@@ -98,12 +102,19 @@ function ExperienceManager() {
       )}
 
       {editingExp && (
-        <form onSubmit={handleSave} className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <form
+          onSubmit={handleSave}
+          className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+        >
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <h3 className="text-lg font-semibold text-slate-200">
-              {editingExp.id ? 'Edit Experience' : 'Create New Experience'}
+              {editingExp.id ? "Edit Experience" : "Create New Experience"}
             </h3>
-            <button type="button" onClick={() => setEditingExp(null)} className="text-slate-400 hover:text-white">
+            <button
+              type="button"
+              onClick={() => setEditingExp(null)}
+              className="text-slate-400 hover:text-white"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -111,27 +122,27 @@ function ExperienceManager() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormInput
               label="Company Name"
-              value={editingExp.company || ''}
+              value={editingExp.company || ""}
               onChange={(e) => setEditingExp({ ...editingExp, company: e.target.value })}
               required
             />
             <FormInput
               label="Role Title"
-              value={editingExp.role || ''}
+              value={editingExp.role || ""}
               onChange={(e) => setEditingExp({ ...editingExp, role: e.target.value })}
               required
             />
             <FormInput
               label="Start Date"
               type="date"
-              value={editingExp.startDate || ''}
+              value={editingExp.startDate || ""}
               onChange={(e) => setEditingExp({ ...editingExp, startDate: e.target.value })}
               required
             />
             <FormInput
               label="End Date (Leave empty if current)"
               type="date"
-              value={editingExp.endDate || ''}
+              value={editingExp.endDate || ""}
               onChange={(e) => setEditingExp({ ...editingExp, endDate: e.target.value })}
             />
           </div>
@@ -169,7 +180,7 @@ function ExperienceManager() {
               disabled={isSaving}
               className="rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2 text-xs font-semibold text-white hover:from-cyan-400 hover:to-indigo-500"
             >
-              {isSaving ? 'Saving...' : 'Save Experience'}
+              {isSaving ? "Saving..." : "Save Experience"}
             </button>
           </div>
         </form>
@@ -177,11 +188,18 @@ function ExperienceManager() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {expList.map((e) => (
-          <div key={e.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl flex flex-col justify-between">
+          <div
+            key={e.id}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl flex flex-col justify-between"
+          >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">{e.company}</span>
-                <span className="text-xs text-slate-500">{e.startDate} – {e.isCurrent ? 'Present' : e.endDate}</span>
+                <span className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                  {e.company}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {e.startDate} – {e.isCurrent ? "Present" : e.endDate}
+                </span>
               </div>
               <h3 className="mt-2 text-xl font-bold text-slate-100">{e.role}</h3>
             </div>

@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
 }
 
-export const FormInput: React.FC<FormInputProps> = ({ label, error, className = '', ...props }) => {
+export const FormInput: React.FC<FormInputProps> = ({ label, error, className = "", ...props }) => {
   return (
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-slate-300">{label}</label>
@@ -23,7 +23,12 @@ interface FormTextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaEle
   error?: string;
 }
 
-export const FormTextArea: React.FC<FormTextAreaProps> = ({ label, error, className = '', ...props }) => {
+export const FormTextArea: React.FC<FormTextAreaProps> = ({
+  label,
+  error,
+  className = "",
+  ...props
+}) => {
   return (
     <div className="space-y-1.5">
       <label className="block text-xs font-medium text-slate-300">{label}</label>

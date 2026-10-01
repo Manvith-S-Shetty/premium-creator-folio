@@ -93,7 +93,12 @@
   --accent-indigo: oklch(0.62 0.22 275);
   --accent-purple: oklch(0.65 0.24 305);
 
-  --gradient-accent: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo) 50%, var(--accent-purple));
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-blue),
+    var(--accent-indigo) 50%,
+    var(--accent-purple)
+  );
   --gradient-text: linear-gradient(135deg, oklch(0.98 0.005 250), oklch(0.78 0.14 265));
   --shadow-glow: 0 0 60px -10px color-mix(in oklab, var(--accent-indigo) 55%, transparent);
   --shadow-soft: 0 20px 60px -25px color-mix(in oklab, var(--accent-indigo) 40%, transparent);
@@ -151,7 +156,15 @@
 
 @utility bg-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--foreground) 5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--foreground) 5%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 48px 48px;
 }

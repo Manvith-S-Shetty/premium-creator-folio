@@ -16,6 +16,7 @@ CREATE TYPE content_status AS ENUM ('draft', 'published', 'archived');
 ## 2. Table Specifications
 
 ### 2.1 `site_settings` (Extended Phase 1 + Phase 2)
+
 Stores global site metadata, styling options, feature toggles, and SEO configurations. Single-row table.
 
 ```sql
@@ -24,7 +25,7 @@ CREATE TABLE site_settings (
     default_theme VARCHAR(50) DEFAULT 'dark',
     accent_color VARCHAR(50) DEFAULT 'cyan',
     analytics_id VARCHAR(100),
-    
+
     -- Phase 2: Feature Toggles (Section Visibility)
     show_certificates BOOLEAN NOT NULL DEFAULT true,
     show_experience BOOLEAN NOT NULL DEFAULT true,
@@ -48,6 +49,7 @@ CREATE TABLE site_settings (
 ```
 
 ### 2.2 `personal_info`
+
 Hero identity and About section text. Single-row table.
 
 ```sql
@@ -74,6 +76,7 @@ CREATE TABLE personal_info (
 ```
 
 ### 2.3 `social_links`
+
 External social profile links.
 
 ```sql
@@ -89,6 +92,7 @@ CREATE TABLE social_links (
 ```
 
 ### 2.4 `skills`
+
 Skill items categorized by domain.
 
 ```sql
@@ -105,6 +109,7 @@ CREATE TABLE skills (
 ```
 
 ### 2.5 `projects` (Phase 2 Updated with `content_status`)
+
 Portfolio project entries with status lifecycle.
 
 ```sql
@@ -128,6 +133,7 @@ CREATE TABLE projects (
 ```
 
 ### 2.6 `project_skills` (Junction Table)
+
 Many-to-many join between projects and skills.
 
 ```sql
@@ -139,6 +145,7 @@ CREATE TABLE project_skills (
 ```
 
 ### 2.7 `project_screenshots`
+
 Project gallery images.
 
 ```sql
@@ -152,6 +159,7 @@ CREATE TABLE project_screenshots (
 ```
 
 ### 2.8 `certificates` (Phase 2 Updated)
+
 Credentials and certifications.
 
 ```sql
@@ -175,6 +183,7 @@ CREATE TABLE certificates (
 ```
 
 ### 2.9 `experience`
+
 Work history and career milestones.
 
 ```sql
@@ -195,6 +204,7 @@ CREATE TABLE experience (
 ```
 
 ### 2.10 `experience_skills` (Junction Table)
+
 Many-to-many join between experience and skills.
 
 ```sql
@@ -206,6 +216,7 @@ CREATE TABLE experience_skills (
 ```
 
 ### 2.11 `education`
+
 Academic history records.
 
 ```sql
@@ -224,6 +235,7 @@ CREATE TABLE education (
 ```
 
 ### 2.12 `achievements` (Phase 2 Updated)
+
 Awards and recognitions.
 
 ```sql
@@ -242,6 +254,7 @@ CREATE TABLE achievements (
 ```
 
 ### 2.13 `hackathons` (Phase 2 Updated)
+
 Hackathon wins and projects.
 
 ```sql
@@ -262,6 +275,7 @@ CREATE TABLE hackathons (
 ```
 
 ### 2.14 `resumes`
+
 Uploaded resume PDF records.
 
 ```sql
@@ -275,6 +289,7 @@ CREATE TABLE resumes (
 ```
 
 ### 2.15 `contact_submissions`
+
 Form submissions from public portfolio visitors.
 
 ```sql
@@ -290,6 +305,7 @@ CREATE TABLE contact_submissions (
 ```
 
 ### 2.16 `media_files`
+
 Metadata audit logs for files in Storage Buckets.
 
 ```sql
@@ -305,6 +321,7 @@ CREATE TABLE media_files (
 ```
 
 ### 2.17 `activity_log` (Phase 2 New Table)
+
 Audit log recording every CMS administrative action.
 
 ```sql
@@ -324,6 +341,7 @@ CREATE TABLE activity_log (
 ## 3. Row Level Security (RLS) Policies
 
 ### 3.1 Public Read Policies (Phase 2 Updated with Status & Toggles)
+
 Public unauthenticated users (`anon`) can read content **only if** `status = 'published'` for status-managed tables.
 
 ```sql
@@ -363,6 +381,7 @@ CREATE POLICY "Public Insert Contact" ON contact_submissions FOR INSERT WITH CHE
 ```
 
 ### 3.2 Admin Full Access Policies
+
 Authenticated admins (`authenticated` role) have full access to read (including drafts/archived), insert, update, and delete all tables.
 
 ```sql

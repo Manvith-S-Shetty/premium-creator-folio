@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { mediaApi } from '@/lib/api/media.api';
-import { Upload, FileText, Image as ImageIcon, Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import { mediaApi } from "@/lib/api/media.api";
+import { Upload, FileText, Image as ImageIcon, Loader2 } from "lucide-react";
 
 interface ImageUploaderProps {
   label: string;
@@ -14,10 +14,10 @@ interface ImageUploaderProps {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
   label,
   bucketName,
-  subfolder = '',
+  subfolder = "",
   value,
   onChange,
-  accept = 'image/*',
+  accept = "image/*",
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       const publicUrl = await mediaApi.uploadMedia(file, bucketName, subfolder);
       onChange(publicUrl);
     } catch (err: any) {
-      setError(err.message || 'Upload failed');
+      setError(err.message || "Upload failed");
     } finally {
       setIsUploading(false);
     }
@@ -45,7 +45,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       <div className="flex items-center gap-4">
         {value && (
           <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-white/10 bg-slate-900 flex items-center justify-center">
-            {accept.includes('pdf') || value.endsWith('.pdf') ? (
+            {accept.includes("pdf") || value.endsWith(".pdf") ? (
               <FileText className="h-8 w-8 text-cyan-400" />
             ) : (
               <img src={value} alt="Uploaded preview" className="h-full w-full object-cover" />
@@ -61,10 +61,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           ) : (
             <>
               <Upload className="h-4 w-4 text-slate-400" />
-              <span>{value ? 'Replace File' : 'Upload File'}</span>
+              <span>{value ? "Replace File" : "Upload File"}</span>
             </>
           )}
-          <input type="file" accept={accept} className="hidden" onChange={handleFileChange} disabled={isUploading} />
+          <input
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={isUploading}
+          />
         </label>
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}

@@ -1,20 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { publicApi } from '@/lib/api/public.api';
-import { adminApi } from '@/lib/api/admin.api';
-import { CertificateDTO } from '@/lib/types/cms.types';
-import { FormInput, FormTextArea } from '@/components/admin/ui/FormInput';
-import { ImageUploader } from '@/components/admin/ui/ImageUploader';
-import { Plus, Trash2, Edit2, CheckCircle2, X } from 'lucide-react';
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { publicApi } from "@/lib/api/public.api";
+import { adminApi } from "@/lib/api/admin.api";
+import { CertificateDTO } from "@/lib/types/cms.types";
+import { FormInput, FormTextArea } from "@/components/admin/ui/FormInput";
+import { ImageUploader } from "@/components/admin/ui/ImageUploader";
+import { Plus, Trash2, Edit2, CheckCircle2, X } from "lucide-react";
 
-export const Route = createFileRoute('/admin/_admin/certificates')({
+export const Route = createFileRoute("/admin/_admin/certificates")({
   component: CertificatesManager,
 });
 
 function CertificatesManager() {
   const [certs, setCerts] = useState<CertificateDTO[]>([]);
   const [editingCert, setEditingCert] = useState<Partial<CertificateDTO> | null>(null);
-  const [tagsStr, setTagsStr] = useState('');
+  const [tagsStr, setTagsStr] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -28,26 +28,26 @@ function CertificatesManager() {
 
   const handleEdit = (cert: CertificateDTO) => {
     setEditingCert(cert);
-    setTagsStr((cert.tags || []).join(', '));
+    setTagsStr((cert.tags || []).join(", "));
   };
 
   const handleNew = () => {
     setEditingCert({
-      title: '',
-      issuer: '',
-      issueDate: new Date().toISOString().split('T')[0],
-      credentialId: '',
-      credentialUrl: '',
-      pdfUrl: '',
-      description: '',
+      title: "",
+      issuer: "",
+      issueDate: new Date().toISOString().split("T")[0],
+      credentialId: "",
+      credentialUrl: "",
+      pdfUrl: "",
+      description: "",
       tags: [],
       displayOrder: certs.length + 1,
     });
-    setTagsStr('');
+    setTagsStr("");
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this certificate?')) {
+    if (confirm("Are you sure you want to delete this certificate?")) {
       await adminApi.deleteCertificate(id);
       loadCerts();
     }
@@ -61,7 +61,10 @@ function CertificatesManager() {
     try {
       const payload = {
         ...editingCert,
-        tags: tagsStr.split(',').map((s) => s.trim()).filter(Boolean),
+        tags: tagsStr
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
       };
 
       await adminApi.upsertCertificate(payload);
@@ -70,7 +73,7 @@ function CertificatesManager() {
       setEditingCert(null);
       loadCerts();
     } catch (err: any) {
-      alert(err.message || 'Failed to save certificate');
+      alert(err.message || "Failed to save certificate");
     } finally {
       setIsSaving(false);
     }
@@ -100,12 +103,19 @@ function CertificatesManager() {
       )}
 
       {editingCert && (
-        <form onSubmit={handleSave} className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <form
+          onSubmit={handleSave}
+          className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+        >
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <h3 className="text-lg font-semibold text-slate-200">
-              {editingCert.id ? 'Edit Certificate' : 'Create New Certificate'}
+              {editingCert.id ? "Edit Certificate" : "Create New Certificate"}
             </h3>
-            <button type="button" onClick={() => setEditingCert(null)} className="text-slate-400 hover:text-white">
+            <button
+              type="button"
+              onClick={() => setEditingCert(null)}
+              className="text-slate-400 hover:text-white"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -113,26 +123,26 @@ function CertificatesManager() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormInput
               label="Certificate Title"
-              value={editingCert.title || ''}
+              value={editingCert.title || ""}
               onChange={(e) => setEditingCert({ ...editingCert, title: e.target.value })}
               required
             />
             <FormInput
               label="Issuer / Organization"
-              value={editingCert.issuer || ''}
+              value={editingCert.issuer || ""}
               onChange={(e) => setEditingCert({ ...editingCert, issuer: e.target.value })}
               required
             />
             <FormInput
               label="Issue Date"
               type="date"
-              value={editingCert.issueDate || ''}
+              value={editingCert.issueDate || ""}
               onChange={(e) => setEditingCert({ ...editingCert, issueDate: e.target.value })}
               required
             />
             <FormInput
               label="Verification URL"
-              value={editingCert.credentialUrl || ''}
+              value={editingCert.credentialUrl || ""}
               onChange={(e) => setEditingCert({ ...editingCert, credentialUrl: e.target.value })}
             />
           </div>
@@ -140,17 +150,27 @@ function CertificatesManager() {
           <FormTextArea
             label="Description"
             rows={2}
-            value={editingCert.description || ''}
+            value={editingCert.description || ""}
             onChange={(e) => setEditingCert({ ...editingCert, description: e.target.value })}
           />
 
-          <ImageUploader
-            label="Certificate PDF File"
-            bucketName="certificates"
-            accept="application/pdf"
-            value={editingCert.pdfUrl || ''}
-            onChange={(url) => setEditingCert({ ...editingCert, pdfUrl: url })}
-          />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <ImageUploader
+              label="Certificate Document (PDF or Image)"
+              bucketName="certificates"
+              accept="application/pdf,image/*"
+              value={editingCert.pdfUrl || ""}
+              onChange={(url) => setEditingCert({ ...editingCert, pdfUrl: url })}
+            />
+
+            <ImageUploader
+              label="Certificate Preview Thumbnail (Optional)"
+              bucketName="certificates"
+              accept="image/*"
+              value={editingCert.thumbnailUrl || ""}
+              onChange={(url) => setEditingCert({ ...editingCert, thumbnailUrl: url })}
+            />
+          </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
             <button
@@ -165,7 +185,7 @@ function CertificatesManager() {
               disabled={isSaving}
               className="rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2 text-xs font-semibold text-white hover:from-cyan-400 hover:to-indigo-500"
             >
-              {isSaving ? 'Saving...' : 'Save Certificate'}
+              {isSaving ? "Saving..." : "Save Certificate"}
             </button>
           </div>
         </form>
@@ -173,10 +193,15 @@ function CertificatesManager() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {certs.map((c) => (
-          <div key={c.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl flex flex-col justify-between">
+          <div
+            key={c.id}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl flex flex-col justify-between"
+          >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">{c.issuer}</span>
+                <span className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                  {c.issuer}
+                </span>
                 <span className="text-xs text-slate-500">{c.issueDate}</span>
               </div>
               <h3 className="mt-2 text-xl font-bold text-slate-100">{c.title}</h3>

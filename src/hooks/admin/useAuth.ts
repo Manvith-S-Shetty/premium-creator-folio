@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/config/supabase';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/config/supabase";
 
 const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour session timeout
-const SESSION_START_KEY = 'admin_session_start_time';
+const SESSION_START_KEY = "admin_session_start_time";
 
 interface AuthContextType {
   user: User | null;
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (currentSession) {
         // If a fresh login event occurred, reset the session start time
-        if (event === 'SIGNED_IN') {
+        if (event === "SIGNED_IN") {
           localStorage.setItem(SESSION_START_KEY, Date.now().toString());
         }
 
@@ -92,16 +92,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return React.createElement(
     AuthContext.Provider,
     { value: { user, session, isLoading, signOut } },
-    children
+    children,
   );
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
-
-
