@@ -1,6 +1,7 @@
-import { motion } from "motion/react";
+import { useRef } from "react";
 import { ArrowRight, Download, Github, Instagram, Linkedin, Mail } from "lucide-react";
 import { usePortfolioData } from "@/hooks/public/usePortfolioData";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 
 function has(v: string) {
@@ -18,6 +19,7 @@ function isValidWebUrl(v: string | undefined | null): boolean {
 export function Hero() {
   const { personalInfo, resumeUrl, socialLinks: dbSocialLinks } = usePortfolioData();
   const isResumeAvailable = isValidWebUrl(resumeUrl);
+  const heroRef = useRef<HTMLElement>(null);
 
   const socialLinksMap =
     Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
@@ -31,136 +33,250 @@ export function Hero() {
           instagram: "https://www.instagram.com/the.day_._dreamer.____",
         };
 
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.from(".hero-status", {
+          y: 12,
+          autoAlpha: 0,
+          duration: 0.6,
+          clearProps: "transform",
+        })
+          .from(
+            ".hero-title",
+            {
+              y: 24,
+              autoAlpha: 0,
+              duration: 0.85,
+              clearProps: "transform",
+            },
+            "-=0.4",
+          )
+          .from(
+            ".hero-role",
+            {
+              y: 16,
+              autoAlpha: 0,
+              duration: 0.7,
+              clearProps: "transform",
+            },
+            "-=0.55",
+          )
+          .from(
+            ".hero-rule",
+            {
+              scaleX: 0,
+              transformOrigin: "left center",
+              duration: 0.7,
+              clearProps: "transform",
+            },
+            "-=0.5",
+          )
+          .from(
+            ".hero-bio",
+            {
+              y: 14,
+              autoAlpha: 0,
+              duration: 0.7,
+              clearProps: "transform",
+            },
+            "-=0.5",
+          )
+          .from(
+            ".hero-actions",
+            {
+              y: 12,
+              autoAlpha: 0,
+              duration: 0.65,
+              clearProps: "transform",
+            },
+            "-=0.45",
+          )
+          .from(
+            ".hero-portrait",
+            {
+              y: 18,
+              scale: 1.03,
+              autoAlpha: 0,
+              duration: 0.95,
+              clearProps: "transform",
+            },
+            0.15,
+          );
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          [
+            ".hero-status",
+            ".hero-title",
+            ".hero-role",
+            ".hero-rule",
+            ".hero-bio",
+            ".hero-actions",
+            ".hero-portrait",
+          ],
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            scaleX: 1,
+            clearProps: "transform",
+          },
+        );
+      });
+    },
+    { scope: heroRef },
+  );
+
+  const displayName =
+    personalInfo.displayName ||
+    ("fullName" in personalInfo ? personalInfo.fullName : personalInfo.name);
+  const fullName = "fullName" in personalInfo ? personalInfo.fullName : personalInfo.name;
+  const primaryTitle =
+    "primaryTitle" in personalInfo ? personalInfo.primaryTitle : personalInfo.title;
+  const isAvailable = "isAvailable" in personalInfo ? personalInfo.isAvailable : true;
+
+  const roleLine =
+    personalInfo.taglineShort || `${primaryTitle || "Software Engineer"} · AI/ML Enthusiast`;
+
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden"
+      ref={heroRef}
+      className="relative min-h-[92vh] flex items-center pt-28 pb-20 md:pt-32 md:pb-24 overflow-hidden bg-[var(--obsidian-950)]"
     >
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 h-[520px] w-[820px] rounded-full blur-3xl opacity-40 accent-gradient" />
-        <div className="absolute inset-0 bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="absolute inset-0 bg-grid opacity-15 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_75%)]" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 w-full grid md:grid-cols-[minmax(0,1fr)_320px] gap-14 items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="order-2 md:order-1"
-        >
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 backdrop-blur-md px-3 py-1.5 text-xs text-muted-foreground mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            {personalInfo.isAvailable ? "Available for new opportunities" : "Currently unavailable"}
+      <div className="mx-auto max-w-6xl px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="order-2 lg:order-1 lg:col-span-7">
+          <div className="hero-status inline-flex items-center gap-2.5 text-xs tracking-[0.14em] uppercase text-[var(--stone-400)] mb-6">
+            <span
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                isAvailable ? "bg-[var(--ivory-200)]" : "bg-[var(--stone-500)]",
+              )}
+              aria-hidden="true"
+            />
+            <span>{isAvailable ? "Available for new opportunities" : "Currently unavailable"}</span>
           </div>
 
-          <h1 className="font-display text-5xl md:text-7xl leading-[1.02] tracking-tight">
-            <span className="text-gradient">
-              {personalInfo.displayName || personalInfo.fullName}
-            </span>
+          <h1 className="hero-title font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem] leading-[0.98] tracking-[-0.025em] text-[var(--ivory-50)]">
+            {displayName}
           </h1>
-          <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-            {personalInfo.primaryTitle} ·{" "}
-            <span className="text-foreground/80">AI/ML Enthusiast</span>
+
+          <p className="hero-role mt-5 text-base sm:text-lg md:text-xl font-normal tracking-tight text-[var(--ivory-200)]">
+            {roleLine}
           </p>
-          <p className="mt-6 max-w-xl text-base md:text-lg text-muted-foreground leading-relaxed">
+
+          <div className="hero-rule editorial-hairline my-7 max-w-md" aria-hidden="true" />
+
+          <p className="hero-bio max-w-xl text-base md:text-[1.0625rem] text-[var(--stone-400)] leading-[1.7]">
             {personalInfo.bio}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            {[
-              { key: "github", label: "GitHub", Icon: Github, href: socialLinksMap.github },
-              { key: "linkedin", label: "LinkedIn", Icon: Linkedin, href: socialLinksMap.linkedin },
-              {
-                key: "instagram",
-                label: "Instagram",
-                Icon: Instagram,
-                href: socialLinksMap.instagram,
-              },
-            ]
-              .filter((b) => has(b.href))
-              .map(({ key, label, Icon, href }) => (
-                <a
-                  key={key}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-full border border-border/80 bg-white/[0.03] backdrop-blur-md px-4 py-2 text-xs font-medium text-foreground/80",
-                    "hover:bg-white/[0.08] hover:border-foreground/30 hover:text-foreground transition-all duration-200",
-                  )}
-                >
-                  <Icon size={14} />
-                  {label}
-                </a>
-              ))}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
-          className="order-1 md:order-2 flex flex-col items-center md:items-end gap-5"
-        >
-          <div className="relative group">
-            <div className="absolute -inset-3 rounded-3xl accent-gradient opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-60" />
-            <div className="relative rounded-[1.75rem] p-[1.5px] accent-gradient overflow-hidden">
-              <img
-                src={personalInfo.photoUrl || "/images/me.jpeg"}
-                alt={personalInfo.fullName}
-                width={360}
-                height={400}
-                className="rounded-2xl w-[300px] md:w-[380px] aspect-[4/5] object-cover bg-card transition-transform duration-500 group-hover:scale-[1.015]"
-              />
-            </div>
-          </div>
-          <div className="flex w-full gap-3.5 justify-center">
-            {isResumeAvailable ? (
+          <div className="hero-actions mt-9 space-y-6">
+            <div className="flex flex-wrap items-center gap-3.5">
               <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                download
-                aria-label="Download Resume"
-                className="group flex-1 inline-flex items-center justify-center gap-2.5 rounded-full border border-border bg-card/60 backdrop-blur-md px-5 py-3.5 text-sm font-medium hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+                href="#contact"
+                className="group inline-flex items-center justify-center gap-2.5 rounded-sm bg-[var(--ivory-50)] text-[var(--obsidian-950)] px-6 py-3.5 text-xs font-medium tracking-[0.08em] uppercase hover:bg-[var(--ivory-200)] transition-colors duration-200"
               >
-                <Download size={16} />
-                Resume
+                <Mail size={15} />
+                Contact
                 <ArrowRight
                   size={14}
-                  className="transition-transform duration-300 group-hover:translate-x-1"
+                  className="transition-transform duration-200 group-hover:translate-x-1"
                 />
               </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                aria-label="Resume unavailable"
-                title="Resume unavailable"
-                className="group flex-1 inline-flex items-center justify-center gap-2.5 rounded-full border border-border/50 bg-card/30 backdrop-blur-md px-5 py-3.5 text-sm font-medium opacity-50 cursor-not-allowed text-muted-foreground"
-              >
-                <Download size={16} />
-                Resume
-                <ArrowRight size={14} />
-              </button>
-            )}
-            <a
-              href="#contact"
-              className="group flex-1 inline-flex items-center justify-center gap-2 rounded-full accent-gradient text-white px-5 py-3.5 text-sm font-medium shadow-[var(--shadow-glow)] hover:brightness-110 transition-all duration-300"
-            >
-              <Mail size={16} />
-              Contact
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </a>
+
+              {isResumeAvailable ? (
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                  aria-label="Download Resume"
+                  className="group inline-flex items-center justify-center gap-2.5 rounded-sm border border-[var(--hairline-rule-lit)] bg-transparent px-6 py-3.5 text-xs font-medium tracking-[0.08em] uppercase text-[var(--ivory-50)] hover:border-[var(--ivory-200)] hover:bg-[var(--charcoal-800)] transition-colors duration-200"
+                >
+                  <Download size={15} />
+                  Resume
+                  <ArrowRight
+                    size={14}
+                    className="transition-transform duration-200 group-hover:translate-x-1"
+                  />
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  aria-label="Resume unavailable"
+                  title="Resume unavailable"
+                  className="inline-flex items-center justify-center gap-2.5 rounded-sm border border-[var(--hairline-rule)] bg-transparent px-6 py-3.5 text-xs font-medium tracking-[0.08em] uppercase opacity-40 cursor-not-allowed text-[var(--stone-400)]"
+                >
+                  <Download size={15} />
+                  Resume
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6 pt-1">
+              {[
+                { key: "github", label: "GitHub", Icon: Github, href: socialLinksMap.github },
+                {
+                  key: "linkedin",
+                  label: "LinkedIn",
+                  Icon: Linkedin,
+                  href: socialLinksMap.linkedin,
+                },
+                {
+                  key: "instagram",
+                  label: "Instagram",
+                  Icon: Instagram,
+                  href: socialLinksMap.instagram,
+                },
+              ]
+                .filter((b) => has(b.href))
+                .map(({ key, label, Icon, href }) => (
+                  <a
+                    key={key}
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="inline-flex items-center gap-2 text-xs tracking-[0.06em] uppercase text-[var(--stone-400)] hover:text-[var(--ivory-50)] transition-colors duration-200"
+                  >
+                    <Icon size={14} />
+                    <span>{label}</span>
+                  </a>
+                ))}
+            </div>
           </div>
-        </motion.div>
+        </div>
+
+        <div className="order-1 lg:order-2 lg:col-span-5 flex justify-center lg:justify-end">
+          <figure className="hero-portrait w-full max-w-[340px] sm:max-w-[360px] lg:max-w-[390px] border border-[var(--hairline-rule-lit)] bg-[var(--charcoal-800)]/40 p-2.5">
+            <div className="overflow-hidden bg-[var(--charcoal-800)]">
+              <img
+                src={personalInfo.photoUrl || "/images/me.jpeg"}
+                alt={fullName}
+                width={390}
+                height={488}
+                className="w-full aspect-[4/5] object-cover grayscale-[35%] contrast-[1.06] brightness-[0.98] transition-all duration-500 hover:grayscale-[15%]"
+              />
+            </div>
+            {personalInfo.location && (
+              <figcaption className="mt-2.5 px-1 flex items-center justify-between text-[11px] tracking-[0.14em] uppercase text-[var(--stone-400)]">
+                <span>{personalInfo.location}</span>
+              </figcaption>
+            )}
+          </figure>
+        </div>
       </div>
     </section>
   );
