@@ -1,78 +1,112 @@
-import { ArrowUp, Github, Linkedin, Mail, Code2 } from "lucide-react";
-import { navigation, personalInfo, socialLinks } from "@/config/data";
+import { ArrowUp, Code2, Github, Linkedin, Mail } from "lucide-react";
+import {
+  navigation,
+  personalInfo as staticPersonalInfo,
+  socialLinks as staticSocialLinks,
+} from "@/config/data";
+import { usePortfolioData } from "@/hooks/public/usePortfolioData";
 
-function has(v: string) {
-  return typeof v === "string" && v.trim().length > 0 && v !== "#";
+function hasValidValue(v: string | undefined | null): v is string {
+  return typeof v === "string" && v.trim().length > 0 && v.trim() !== "#";
 }
 
 export function Footer() {
+  const { personalInfo, socialLinks: dbSocialLinks } = usePortfolioData();
   const year = new Date().getFullYear();
+
+  const displayName =
+    personalInfo.displayName ||
+    ("fullName" in personalInfo ? personalInfo.fullName : personalInfo.name);
+  const fullName = "fullName" in personalInfo ? personalInfo.fullName : personalInfo.name;
+  const tagline = personalInfo.taglineShort || staticPersonalInfo.taglineShort;
+  const personalEmail =
+    "email" in personalInfo && typeof personalInfo.email === "string" ? personalInfo.email : "";
+
+  const socialMap =
+    Array.isArray(dbSocialLinks) && dbSocialLinks.length > 0
+      ? dbSocialLinks.reduce(
+          (acc, curr) => ({ ...acc, [curr.platform]: curr.url }),
+          {} as Record<string, string>,
+        )
+      : {
+          github: staticSocialLinks.github,
+          linkedin: staticSocialLinks.linkedin,
+          leetcode: staticSocialLinks.leetcode,
+          email: personalEmail || staticSocialLinks.email,
+        };
+
+  const emailAddress = personalEmail || socialMap.email || staticSocialLinks.email;
+
   const socials = [
-    { key: "github", Icon: Github, href: socialLinks.github, label: "GitHub" },
-    { key: "linkedin", Icon: Linkedin, href: socialLinks.linkedin, label: "LinkedIn" },
-    { key: "leetcode", Icon: Code2, href: socialLinks.leetcode, label: "LeetCode" },
+    { key: "github", Icon: Github, href: socialMap.github, label: "GitHub" },
+    { key: "linkedin", Icon: Linkedin, href: socialMap.linkedin, label: "LinkedIn" },
+    { key: "leetcode", Icon: Code2, href: socialMap.leetcode, label: "LeetCode" },
     {
       key: "email",
       Icon: Mail,
-      href: socialLinks.email ? `mailto:${socialLinks.email}` : "",
+      href: hasValidValue(emailAddress) ? `mailto:${emailAddress}` : "",
       label: "Email",
     },
-  ].filter((s) => has(s.href));
+  ].filter((s) => hasValidValue(s.href));
 
   return (
-    <footer className="relative border-t border-border mt-10">
-      <div className="mx-auto max-w-6xl px-6 py-12 grid md:grid-cols-3 gap-8 items-start">
-        <div>
-          <div className="font-display text-xl text-gradient">{personalInfo.displayName}</div>
-          <p className="mt-2 text-sm text-muted-foreground max-w-xs">{personalInfo.taglineShort}</p>
+    <footer className="relative border-t border-[var(--hairline-rule)] bg-[var(--obsidian-950)]">
+      <div className="mx-auto max-w-6xl px-6 py-14 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div className="md:col-span-4">
+          <div className="font-display text-2xl tracking-tight text-[var(--ivory-50)]">
+            {displayName}
+          </div>
+          {tagline && <p className="mt-2 text-xs text-[var(--stone-400)] max-w-xs">{tagline}</p>}
         </div>
 
-        <nav className="flex flex-wrap md:flex-nowrap gap-x-5 gap-y-2 md:justify-center text-sm text-muted-foreground">
-          {navigation.map((n) => (
+        <nav
+          aria-label="Footer navigation"
+          className="md:col-span-5 flex flex-wrap gap-x-6 gap-y-2.5 md:justify-center text-xs tracking-[0.06em] uppercase text-[var(--stone-400)]"
+        >
+          {navigation.map((item) => (
             <a
-              key={n.href}
-              href={n.href}
-              className="hover:text-foreground transition-colors whitespace-nowrap"
+              key={item.href}
+              href={item.href}
+              className="hover:text-[var(--ivory-50)] transition-colors whitespace-nowrap"
             >
-              {n.label}
+              {item.label}
             </a>
           ))}
         </nav>
 
-        <div className="flex md:justify-end items-center gap-2.5">
-          <div className="flex items-center gap-2.5">
-            {socials.map(({ key, Icon, href, label }) => (
-              <a
-                key={key}
-                href={href}
-                target={href.startsWith("http") ? "_blank" : undefined}
-                rel="noreferrer"
-                aria-label={label}
-                className="h-9 w-9 rounded-xl border border-border bg-white/[0.03] grid place-items-center hover:border-foreground/30 hover:text-cyan-400 transition-colors"
-              >
-                <Icon size={15} />
-              </a>
-            ))}
-          </div>
+        <div className="md:col-span-3 flex md:justify-end items-center gap-3">
+          {socials.map(({ key, Icon, href, label }) => (
+            <a
+              key={key}
+              href={href}
+              target={href.startsWith("http") ? "_blank" : undefined}
+              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+              aria-label={label}
+              className="h-9 w-9 rounded-sm border border-[var(--hairline-rule)] grid place-items-center text-[var(--stone-400)] hover:border-[var(--hairline-rule-lit)] hover:text-[var(--ivory-50)] transition-colors"
+            >
+              <Icon size={15} aria-hidden="true" />
+            </a>
+          ))}
 
-          <div className="h-4 w-px bg-border/60 mx-1" aria-hidden="true" />
+          <div className="h-4 w-px bg-[var(--hairline-rule)] mx-1" aria-hidden="true" />
 
           <a
             href="#hero"
-            className="h-9 w-9 rounded-xl accent-gradient grid place-items-center text-white shadow-md hover:brightness-110 transition cursor-pointer"
             aria-label="Back to top"
             title="Back to top"
+            className="h-9 w-9 rounded-sm border border-[var(--hairline-rule-lit)] grid place-items-center text-[var(--ivory-50)] hover:bg-[var(--ivory-50)] hover:text-[var(--obsidian-950)] transition-colors"
           >
-            <ArrowUp size={15} />
+            <ArrowUp size={15} aria-hidden="true" />
           </a>
         </div>
       </div>
-      <div className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+
+      <div className="border-t border-[var(--hairline-rule)]">
+        <div className="mx-auto max-w-6xl px-6 py-5 flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--stone-400)]">
           <span>
-            © {year} {personalInfo.name}. All rights reserved.
+            © {year} {fullName}. All rights reserved.
           </span>
-          <span>Crafted with care</span>
+          <span className="tracking-[0.06em] uppercase text-[11px]">Software Engineering</span>
         </div>
       </div>
     </footer>
